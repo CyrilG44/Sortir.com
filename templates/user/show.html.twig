@@ -7,10 +7,7 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user.id }}</td>
-            </tr>
+
             <tr>
                 <th>Pseudo</th>
                 <td>{{ user.pseudo }}</td>
@@ -36,7 +33,7 @@
 
 
 
-    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+    <a href="{{ path('app_user_edit') }}">edit</a>
 
-   
+
 {% endblock %}
