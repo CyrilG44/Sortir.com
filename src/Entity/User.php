@@ -242,33 +242,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Activity>
-     */
-    public function getActivitiesParticipant(): Collection
-    {
-        return $this->activities_participant;
-    }
-
-    public function addActivitiesParticipant(Activity $activitiesParticipant): static
-    {
-        if (!$this->activities_participant->contains($activitiesParticipant)) {
-            $this->activities_participant->add($activitiesParticipant);
-            $activitiesParticipant->addParticipant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeActivitiesParticipant(Activity $activitiesParticipant): static
-    {
-        if ($this->activities_participant->removeElement($activitiesParticipant)) {
-            $activitiesParticipant->removeParticipant($this);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Registration>
      */
     public function getRegistrations(): Collection
