@@ -6,6 +6,7 @@ use App\Entity\Activity;
 use App\Entity\Place;
 use App\Entity\State;
 use App\Entity\User;
+use phpDocumentor\Reflection\Type;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,34 +17,47 @@ class ActivityType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
+            ->add('name', null, [
+                'label' => "Nom de la sortie",
+                'required' => true,
+            ])
             ->add('starting_date', null, [
                 'widget' => 'single_text',
+                'label' => "Date de la sortie",
+                'required' => true,
             ])
-            ->add('duration')
+            ->add('duration', null,  [
+                'label' => "Durée de la sortie (en heure)",
+                'required' => false,
+            ])
             ->add('registration_limit_date', null, [
                 'widget' => 'single_text',
+                'label' => "Date limite d'inscription",
+                'required' => true,
             ])
-            ->add('registration_max_nb')
-            ->add('description')
-            ->add('photo_url')
-            ->add('is_archived')
+            ->add('registration_max_nb', null,  [
+                'label' => "Nombre d'inscription maximum",
+                'required' => true,
+            ])
+            ->add('description', null,  [
+                'label' => "Description de la sortie",
+                'required' => false,
+            ])
+            ->add('photo_url', null,  [
+                'label' => "Url de la photo",
+                'required' => false,
+            ])
             ->add('organizer', EntityType::class, [
                 'class' => User::class,
-                'choice_label' => 'id',
-            ])
-            ->add('participants', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
-                'multiple' => true,
+                'choice_label' => 'pseudo',
+                'label' => "Organisateur",
+                'required' => true,
             ])
             ->add('place', EntityType::class, [
                 'class' => Place::class,
-                'choice_label' => 'id',
-            ])
-            ->add('state', EntityType::class, [
-                'class' => State::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
+                'label' => "Lieu de la sortie",
+                'required' => true,
             ])
         ;
     }
