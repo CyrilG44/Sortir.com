@@ -1,20 +1,49 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ActivityController!{% endblock %}
+{% block title %}Activity index{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <h1>Activity index</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Starting_date</th>
+                <th>Duration</th>
+                <th>Registration_limit_date</th>
+                <th>Registration_max_nb</th>
+                <th>Description</th>
+                <th>Photo_url</th>
+                <th>Is_archived</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for activity in activities %}
+            <tr>
+                <td>{{ activity.id }}</td>
+                <td>{{ activity.name }}</td>
+                <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ activity.duration }}</td>
+                <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ activity.registrationMaxNb }}</td>
+                <td>{{ activity.description }}</td>
+                <td>{{ activity.photoUrl }}</td>
+                <td>{{ activity.isArchived ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_activity_show', {'id': activity.id}) }}">show</a>
+                    <a href="{{ path('app_activity_edit', {'id': activity.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/cgrignoux2024/Desktop/projet-symfony/sortir.com/src/Controller/ActivityController.php</code></li>
-        <li>Your template at <code>C:/Users/cgrignoux2024/Desktop/projet-symfony/sortir.com/templates/activity/index.html.twig</code></li>
-    </ul>
-</div>
+    <a href="{{ path('app_activity_new') }}">Create new</a>
 {% endblock %}
