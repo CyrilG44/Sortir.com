@@ -6,8 +6,11 @@ use App\Repository\PlaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PlaceRepository::class)]
+#[ORM\UniqueConstraint(columns: ['name', 'city'])]
+#[UniqueEntity(fields: ['name', 'city'], message: "Ce lieu existe déjà !")]
 class Place
 {
     #[ORM\Id]
@@ -28,6 +31,7 @@ class Place
     private ?float $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'places')]
+    #[ORM\JoinColumn(name: 'city')]
     private ?City $city = null;
 
     /**

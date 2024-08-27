@@ -15,8 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_PSEUDO', fields: ['pseudo'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['pseudo'], message: 'There is already an account with this pseudo')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: 'pseudo', message: 'Pseudo déjà utilisé')]
+#[UniqueEntity(fields: 'email', message: 'E-mail déjà utilisé')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -62,15 +62,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $activities_organizer;
 
     /**
-     * @var Collection<int, Registration>
+     * @var Collection<int, Activity>
      */
-    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'user')]
-    private Collection $registrations;
+    #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'participants')]
+    private Collection $activities_participant;
 
     public function __construct()
     {
         $this->activities_organizer = new ArrayCollection();
-        $this->registrations = new ArrayCollection();
+        $this->activities_participant = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -260,36 +260,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->activities_participant->removeElement($activitiesParticipant)) {
             $activitiesParticipant->removeParticipant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Registration>
-     */
-    public function getRegistrations(): Collection
-    {
-        return $this->registrations;
-    }
-
-    public function addRegistration(Registration $registration): static
-    {
-        if (!$this->registrations->contains($registration)) {
-            $this->registrations->add($registration);
-            $registration->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRegistration(Registration $registration): static
-    {
-        if ($this->registrations->removeElement($registration)) {
-            // set the owning side to null (unless already changed)
-            if ($registration->getUser() === $this) {
-                $registration->setUser(null);
-            }
         }
 
         return $this;
