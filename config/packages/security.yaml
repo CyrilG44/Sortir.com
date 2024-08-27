@@ -8,7 +8,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: pseudo
+                #property: pseudo
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -18,6 +18,8 @@ security:
             lazy: true
             provider: app_user_provider
             form_login:
+                #username_parameter: identifier  # Utilisez le même nom que dans le formulaire
+                #password_parameter: password
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
