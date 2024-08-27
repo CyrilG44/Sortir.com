@@ -26,3 +26,6 @@
 
 ##ignorer les .idea
 .idea
+
+#ignorer le contenu du dossier migrations (pour le moment ?)
+/migrations
