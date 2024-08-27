@@ -44,8 +44,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
     private ?string $email = null;
 
-    #[ORM\Column]
-    private ?bool $is_admin = null;
 
     #[ORM\Column]
     private ?bool $is_active = null;
@@ -173,17 +171,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isAdmin(): ?bool
-    {
-        return $this->is_admin;
-    }
-
-    public function setAdmin(bool $is_admin): static
-    {
-        $this->is_admin = $is_admin;
-
-        return $this;
-    }
 
     public function isActive(): ?bool
     {
