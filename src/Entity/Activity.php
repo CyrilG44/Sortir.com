@@ -23,7 +23,7 @@ class Activity
     private ?\DateTimeInterface $starting_date = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $duration = null;
+    private ?int $duration_hours = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $registration_limit_date = null;
@@ -92,14 +92,14 @@ class Activity
         return $this;
     }
 
-    public function getDuration(): ?int
+    public function getDurationHours(): ?int
     {
-        return $this->duration;
+        return $this->duration_hours;
     }
 
-    public function setDuration(?int $duration): static
+    public function setDurationHours(?int $duration): static
     {
-        $this->duration = $duration;
+        $this->duration_hours = $duration;
 
         return $this;
     }
