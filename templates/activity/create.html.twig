@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} - Création d'une sortie {% endblock %}
+
+{% block body %}
+    <h1>Créer une nouvelle sortie</h1>
+
+    {{ include('activity/_form.html.twig') }}
+
+    <a href="{{ path('app_activity_list') }}">back to list</a>
+{% endblock %}
