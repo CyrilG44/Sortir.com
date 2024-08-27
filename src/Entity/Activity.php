@@ -40,8 +40,8 @@ class Activity
     #[ORM\Column(length: 250, nullable: true)]
     private ?string $photo_url = null;
 
-    #[ORM\Column]
-    private ?bool $is_archived = null;
+    #[ORM\Column(type: Types::BOOLEAN, options: ["default"=> "0"])]
+    private ?bool $is_archived;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(nullable: false)]
@@ -54,11 +54,11 @@ class Activity
     private Collection $participants;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'place', nullable: false)]
     private ?Place $place = null;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'state', nullable: false)]
     private ?State $state = null;
 
     public function __construct()
