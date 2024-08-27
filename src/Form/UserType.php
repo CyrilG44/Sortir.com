@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -14,17 +15,11 @@ class UserType extends AbstractType
     {
         $builder
             ->add('pseudo')
-            ->add('roles')
             ->add('password')
             ->add('last_name')
             ->add('first_name')
             ->add('phone')
             ->add('email')
-            ->add('is_admin')
-            ->add('is_active')
-            ->add('submit', SubmitType::class, [
-                'label' => 'Submit',
-            ])
         ;
     }
 

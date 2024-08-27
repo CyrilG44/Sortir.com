@@ -57,15 +57,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $activities_organizer;
 
     /**
-     * @var Collection<int, Activity>
+     * @var Collection<int, Registration>
      */
-    #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'participants')]
-    private Collection $activities_participant;
+    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'user')]
+    private Collection $registrations;
 
     public function __construct()
     {
         $this->activities_organizer = new ArrayCollection();
-        $this->activities_participant = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -255,6 +255,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->activities_participant->removeElement($activitiesParticipant)) {
             $activitiesParticipant->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Registration>
+     */
+    public function getRegistrations(): Collection
+    {
+        return $this->registrations;
+    }
+
+    public function addRegistration(Registration $registration): static
+    {
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations->add($registration);
+            $registration->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistration(Registration $registration): static
+    {
+        if ($this->registrations->removeElement($registration)) {
+            // set the owning side to null (unless already changed)
+            if ($registration->getUser() === $this) {
+                $registration->setUser(null);
+            }
         }
 
         return $this;

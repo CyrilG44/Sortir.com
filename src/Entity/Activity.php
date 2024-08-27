@@ -23,7 +23,7 @@ class Activity
     private ?\DateTimeInterface $starting_date = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $duration = null;
+    private ?int $duration_hours = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $registration_limit_date = null;
@@ -44,12 +44,6 @@ class Activity
     #[ORM\JoinColumn(nullable: false)]
     private ?User $organizer = null;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'activities_participant')]
-    private Collection $participants;
-
     #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Place $place = null;
@@ -58,9 +52,15 @@ class Activity
     #[ORM\JoinColumn(nullable: false)]
     private ?State $state = null;
 
+    /**
+     * @var Collection<int, Registration>
+     */
+    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'activity')]
+    private Collection $registrations;
+
     public function __construct()
     {
-        $this->participants = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,14 +92,14 @@ class Activity
         return $this;
     }
 
-    public function getDuration(): ?int
+    public function getDurationHours(): ?int
     {
-        return $this->duration;
+        return $this->duration_hours;
     }
 
-    public function setDuration(?int $duration): static
+    public function setDurationHours(?int $duration): static
     {
-        $this->duration = $duration;
+        $this->duration_hours = $duration;
 
         return $this;
     }
@@ -176,30 +176,6 @@ class Activity
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getParticipants(): Collection
-    {
-        return $this->participants;
-    }
-
-    public function addParticipant(User $participant): static
-    {
-        if (!$this->participants->contains($participant)) {
-            $this->participants->add($participant);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipant(User $participant): static
-    {
-        $this->participants->removeElement($participant);
-
-        return $this;
-    }
-
     public function getPlace(): ?Place
     {
         return $this->place;
@@ -220,6 +196,36 @@ class Activity
     public function setState(?State $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Registration>
+     */
+    public function getRegistrations(): Collection
+    {
+        return $this->registrations;
+    }
+
+    public function addRegistration(Registration $registration): static
+    {
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations->add($registration);
+            $registration->setActivity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistration(Registration $registration): static
+    {
+        if ($this->registrations->removeElement($registration)) {
+            // set the owning side to null (unless already changed)
+            if ($registration->getActivity() === $this) {
+                $registration->setActivity(null);
+            }
+        }
 
         return $this;
     }
