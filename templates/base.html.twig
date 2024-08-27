@@ -13,9 +13,11 @@
     </head>
     <body>
 
-    <h1>SORTIE</h1>
+    <header>
+        <img src="{{ asset('/images/sortir.png') }}" alt="logo sortir.com">
 
-    <nav>
+
+        <nav>
         <ul>
             <li><a href="{{ path('app_home') }}">Accueil</a></li>
             {% if is_granted('IS_AUTHENTICATED') %}
@@ -25,8 +27,10 @@
             {% endif %}
         </ul>
     </nav>
-
+    </header>
 
         {% block body %}{% endblock %}
+
+        <footer>© ENI 2024 - HD2WM_152 [The best team]</footer>
     </body>
 </html>

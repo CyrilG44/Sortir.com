@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -44,9 +46,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
     private ?string $email = null;
 
-
     #[ORM\Column]
     private ?bool $is_active = null;
+
+    /**
+     * @var Collection<int, Activity>
+     */
+    #[ORM\OneToMany(targetEntity: Activity::class, mappedBy: 'organizer', orphanRemoval: true)]
+    private Collection $activities_organizer;
+
+    /**
+     * @var Collection<int, Activity>
+     */
+    #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'participants')]
+    private Collection $activities_participant;
+
+    public function __construct()
+    {
+        $this->activities_organizer = new ArrayCollection();
+        $this->activities_participant = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -171,7 +190,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
     public function isActive(): ?bool
     {
         return $this->is_active;
@@ -180,6 +198,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActive(bool $is_active): static
     {
         $this->is_active = $is_active;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Activity>
+     */
+    public function getActivitiesOrganizer(): Collection
+    {
+        return $this->activities_organizer;
+    }
+
+    public function addActivityOrganizer(Activity $activity): static
+    {
+        if (!$this->activities_organizer->contains($activity)) {
+            $this->activities_organizer->add($activity);
+            $activity->setOrganizer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivityOrganizer(Activity $activity): static
+    {
+        if ($this->activities_organizer->removeElement($activity)) {
+            // set the owning side to null (unless already changed)
+            if ($activity->getOrganizer() === $this) {
+                $activity->setOrganizer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Activity>
+     */
+    public function getActivitiesParticipant(): Collection
+    {
+        return $this->activities_participant;
+    }
+
+    public function addActivitiesParticipant(Activity $activitiesParticipant): static
+    {
+        if (!$this->activities_participant->contains($activitiesParticipant)) {
+            $this->activities_participant->add($activitiesParticipant);
+            $activitiesParticipant->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActivitiesParticipant(Activity $activitiesParticipant): static
+    {
+        if ($this->activities_participant->removeElement($activitiesParticipant)) {
+            $activitiesParticipant->removeParticipant($this);
+        }
 
         return $this;
     }

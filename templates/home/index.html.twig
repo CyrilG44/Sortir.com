@@ -1,7 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sortie.com - accueil{% endblock %}
+{% block title %}{{ parent() }} - Home{% endblock %}
 
 {% block body %}
-
+    <h1>Bienvenue sur Sortir.com !</h1>
+    <p>Cette application a pour but de lister les événements proposés par l'ENI</p>
+    <p>Les élèves et le personnel peuvent s'inscire aux sorties de leur choix</p>
+    <iframe src="https://giphy.com/embed/RnEZXnvVbd1tm6PnUO" width="480" height="271" class="giphy-embed" allowFullScreen></iframe>
 {% endblock %}
