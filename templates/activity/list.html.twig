@@ -3,18 +3,22 @@
 {% block title %}{{parent()}} - Liste des sorties{% endblock %}
 
 {% block body %}
-    <h1>Liste des sorties</h1>
+    <h1>Sorties</h1>
 
-    <table class="table">
+    <div>bloc recherche</div>
+
+    <div>
+    <table>
         <thead>
             <tr>
-                <th>Nom de la sortie</th>
-                <th>Date de début de la sortie</th>
-                <th>Durée de la sortie en heure</th>
-                <th>Date limite d'inscription à la sortie</th>
-                <th>Nombre d'inscription maximum à la sortie</th>
-                <th>Description de la sortie</th>
-                <th>actions</th>
+                <th>Nom</th>
+                <th>Début</th>
+                <th>Inscription jusqu'au</th>
+                <th>inscrits/places</th>
+                <th>Etat</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -22,15 +26,22 @@
             <tr>
                 <td>{{ activity.name }}</td>
                 <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ activity.durationHours  }}</td>
                 <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ activity.registrationMaxNb }}</td>
-                <td>{{ activity.description }}</td>
-
+                <td>{{ 'TBD/' ~ activity.registrationMaxNb }}</td>
+                <td>{{ activity.state.nameFr }}</td>
                 <td>
-                    <a href="{{ path('app_activity_detail', {'id': activity.id}) }}">show</a>
-                    <a href="{{ path('app_activity_update', {'id': activity.id}) }}">edit</a>
-                    <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">cancel</a>
+                    {% for r in activity.registrations|filter(r=> r.user.id == app.user.id) %}
+                        X
+                    {% endfor %}
+                </td>
+                <td><a href="">{{ activity.organizer.pseudo }}</a></td>
+                <td>
+                    <a href="{{ path('app_activity_detail', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a>
+                    <a href=""><img style="max-height: 30px" src="{{ asset('images/icone-publier.webp') }}" alt="Publier"></a>
+                    <a href=""><img style="max-height: 30px" src="{{ asset('images/icone-s\'inscrire.png') }}" alt="S'inscrire"></a>
+                    <a href=""><img style="max-height: 30px" src="{{ asset('images/icone-se-desister.png') }}" alt="Se désister"></a>
+                    <a href="{{ path('app_activity_update', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier"></a>
+                    <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-annuler.jpg') }}" alt="Annuler"></a>
                 </td>
 
             </tr>
@@ -41,6 +52,8 @@
         {% endfor %}
         </tbody>
     </table>
+    </div>
 
-    <a href="{{ path('app_activity_create') }}">Create new</a>
+    <div><a href="{{ path('app_activity_create') }}">Nouvelle sortie</a></div>
+
 {% endblock %}
