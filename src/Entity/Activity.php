@@ -2,46 +2,67 @@
 
 namespace App\Entity;
 
+use App\EntityListener\ActivityListener;
 use App\Repository\ActivityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
+#[ORM\EntityListeners([ActivityListener::class])]
 #[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place', 'organizer'])]
 #[UniqueEntity(fields: ['name', 'starting_date', 'place', 'organizer'], message: "Une sortie identique est déjà proposée !")]
 class Activity
 {
+
+    private const IS_ARCHIVED = false;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 3,
+        minMessage: "C'est trop court, il faut {{ limit }} caractère minimum",
+        max: 30,
+        maxMessage: "C'est trop long, il faut {{ limit }} caractère maximum",
+    )]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $starting_date = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\NotBlank]
     private ?int $duration_hours = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $registration_limit_date = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
     private ?int $registration_max_nb = null;
 
     #[ORM\Column(length: 500, nullable: true)]
+    #[Assert\Length(
+        max: 500,
+        maxMessage: "C'est trop long, il faut {{ limit }} caractère maximum",
+    )]
     private ?string $description = null;
 
     #[ORM\Column(length: 250, nullable: true)]
     private ?string $photo_url = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ["default"=> "0"])]
-    private ?bool $is_archived;
+    #[ORM\Column]
+    private ?bool $is_archived = self::IS_ARCHIVED;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(name: 'organizer', nullable: false)]
@@ -50,6 +71,7 @@ class Activity
     #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(name: 'place', nullable: false)]
     private ?Place $place = null;
+
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
     #[ORM\JoinColumn(name: 'state', nullable: false)]
@@ -198,6 +220,7 @@ class Activity
 
     public function setState(?State $state): static
     {
+
         $this->state = $state;
 
         return $this;

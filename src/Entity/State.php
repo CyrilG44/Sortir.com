@@ -10,13 +10,16 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: StateRepository::class)]
 class State
 {
+
+    private const DEFAULT_STATE = "DRAFT";
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
-    private ?string $name = null;
+    private ?string $name = self::DEFAULT_STATE;
 
     /**
      * @var Collection<int, Activity>

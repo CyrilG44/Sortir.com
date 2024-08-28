@@ -16,6 +16,15 @@ class StateRepository extends ServiceEntityRepository
         parent::__construct($registry, State::class);
     }
 
+    public function getTheState(string $name): ?State
+    {
+        return $this->createQueryBuilder('s')
+            ->where('s.name = :name')
+            ->setParameter(':name', $name)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     //    /**
     //     * @return State[] Returns an array of State objects
     //     */

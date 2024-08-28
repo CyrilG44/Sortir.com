@@ -26,7 +26,7 @@ class ActivityType extends AbstractType
                 'label' => "Date de la sortie",
                 'required' => true,
             ])
-            ->add('duration', null,  [
+            ->add('duration_hours', null,  [
                 'label' => "Durée de la sortie (en heure)",
                 'required' => false,
             ])
