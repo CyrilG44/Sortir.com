@@ -3,7 +3,7 @@
 {% block title %}User{% endblock %}
 
 {% block body %}
-    <h1>User</h1>
+    <h1>Utilisateur</h1>
 
     <table class="table">
         <tbody>
@@ -13,19 +13,19 @@
                 <td>{{ user.pseudo }}</td>
             </tr>
             <tr>
-                <th>Last_name</th>
+                <th>Nom</th>
                 <td>{{ user.lastName }}</td>
             </tr>
             <tr>
-                <th>First_name</th>
+                <th>Prénom</th>
                 <td>{{ user.firstName }}</td>
             </tr>
             <tr>
-                <th>Phone</th>
+                <th>Téléphone</th>
                 <td>{{ user.phone }}</td>
             </tr>
             <tr>
-                <th>Email</th>
+                <th>Mail</th>
                 <td>{{ user.email }}</td>
             </tr>
         </tbody>
@@ -33,7 +33,7 @@
 
 
 
-    <a href="{{ path('app_user_edit') }}">edit</a>
+    <a href="{{ path('app_user_edit') }}">modifier</a>
 
 
 {% endblock %}

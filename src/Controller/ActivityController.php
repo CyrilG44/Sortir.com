@@ -20,8 +20,10 @@ class ActivityController extends AbstractController
     #[Route('/', name: '_list', methods: ['GET'])]
     public function index(ActivityRepository $activityRepository): Response
     {
+        $allActivities =$activityRepository->findAll();
+
         return $this->render('activity/list.html.twig', [
-            'activities' => $activityRepository->findAll(),
+            'activities' => $allActivities,
         ]);
     }
 

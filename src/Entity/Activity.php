@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\EntityListener\ActivityListener;
 use App\Repository\ActivityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,6 +13,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
 #[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place_id', 'state_id'])]
 #[UniqueEntity(fields: ['name', 'starting_date', 'place', 'state'], message: "Une sortie identique est déjà proposée !")]
+#[ORM\EntityListeners([ActivityListener::class])]
 class Activity
 {
     #[ORM\Id]
