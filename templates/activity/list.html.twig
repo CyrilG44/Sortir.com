@@ -56,8 +56,9 @@
                 <td>
                     <a href="{{ path('app_activity_detail', {'id': activity.id}) }}">show</a>
                     <a href="{{ path('app_activity_update', {'id': activity.id}) }}">edit</a>
+                    <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">cancel</a>
                 </td>
-                -->
+
             </tr>
         {% else %}
             <tr>

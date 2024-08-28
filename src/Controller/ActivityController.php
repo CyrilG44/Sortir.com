@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Activity;
 use App\Entity\Registration;
+use App\Entity\State;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\RegistrationRepository;
+use App\Repository\StateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +22,8 @@ class ActivityController extends AbstractController
     public function index(ActivityRepository $activityRepository): Response
     {
         $date = new \DateTime();
+
+
 
         return $this->render('activity/list.html.twig', [
             'activities' => $activityRepository->findAll(),
@@ -80,6 +84,17 @@ class ActivityController extends AbstractController
             $entityManager->remove($activity);
             $entityManager->flush();
         }
+
+        return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/cancel', name: '_cancel', methods: ['GET', 'POST'])]
+    public function cancel(Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
+    {
+        $state = $stateRepository->findOneBy(['name' => 'cancelled']);
+        $activity->setState($state);
+        $entityManager->flush();
+
 
         return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
     }
