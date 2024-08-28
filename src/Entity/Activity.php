@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
-#[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place', 'organizer'])]
-#[UniqueEntity(fields: ['name', 'starting_date', 'place', 'organizer'], message: "Une sortie identique est déjà proposée !")]
+#[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place_id', 'organizer_id'])]
+#[UniqueEntity(fields: ['name', 'starting_date', 'place'], message: "Une sortie identique est déjà proposée !")]
 class Activity
 {
     #[ORM\Id]
@@ -44,15 +44,15 @@ class Activity
     private ?bool $is_archived;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(name: 'organizer', nullable: false)]
+    #[ORM\JoinColumn(name: 'organizer_id', nullable: false)]
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(name: 'place', nullable: false)]
+    #[ORM\JoinColumn(name: 'place_id', nullable: false)]
     private ?Place $place = null;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(name: 'state', nullable: false)]
+    #[ORM\JoinColumn(name: 'state_id', nullable: false)]
     private ?State $state = null;
 
     /**

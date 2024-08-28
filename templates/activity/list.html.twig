@@ -22,16 +22,17 @@
             <tr>
                 <td>{{ activity.name }}</td>
                 <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ activity.duration }}</td>
+                <td>{{ activity.durationHours  }}</td>
                 <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ activity.registrationMaxNb }}</td>
                 <td>{{ activity.description }}</td>
-                <!--
+
                 <td>
                     <a href="{{ path('app_activity_detail', {'id': activity.id}) }}">show</a>
                     <a href="{{ path('app_activity_update', {'id': activity.id}) }}">edit</a>
+                    <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">cancel</a>
                 </td>
-                -->
+
             </tr>
         {% else %}
             <tr>

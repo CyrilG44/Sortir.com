@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -60,15 +61,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $activities_organizer;
 
     /**
-     * @var Collection<int, Activity>
+     * @var Collection<int, Registration>
      */
-    #[ORM\ManyToMany(targetEntity: Activity::class, mappedBy: 'participants')]
-    private Collection $activities_participant;
+    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'user')]
+    private Collection $registrations;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Campus $campus = null;
 
     public function __construct()
     {
         $this->activities_organizer = new ArrayCollection();
-        $this->activities_participant = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -237,28 +242,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Activity>
+     * @return Collection<int, Registration>
      */
-    public function getActivitiesParticipant(): Collection
+    public function getRegistrations(): Collection
     {
-        return $this->activities_participant;
+        return $this->registrations;
     }
 
-    public function addActivitiesParticipant(Activity $activitiesParticipant): static
+    public function addRegistration(Registration $registration): static
     {
-        if (!$this->activities_participant->contains($activitiesParticipant)) {
-            $this->activities_participant->add($activitiesParticipant);
-            $activitiesParticipant->addParticipant($this);
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations->add($registration);
+            $registration->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeActivitiesParticipant(Activity $activitiesParticipant): static
+    public function removeRegistration(Registration $registration): static
     {
-        if ($this->activities_participant->removeElement($activitiesParticipant)) {
-            $activitiesParticipant->removeParticipant($this);
+        if ($this->registrations->removeElement($registration)) {
+            // set the owning side to null (unless already changed)
+            if ($registration->getUser() === $this) {
+                $registration->setUser(null);
+            }
         }
+
+        return $this;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): static
+    {
+        $this->campus = $campus;
 
         return $this;
     }
