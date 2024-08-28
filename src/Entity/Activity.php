@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
-#[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place', 'state'])]
+#[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place_id', 'state_id'])]
 #[UniqueEntity(fields: ['name', 'starting_date', 'place', 'state'], message: "Une sortie identique est déjà proposée !")]
 class Activity
 {
@@ -48,11 +48,11 @@ class Activity
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(name: 'place', nullable: false)]
+    #[ORM\JoinColumn(name: 'place_id', nullable: false)]
     private ?Place $place = null;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(name: 'state', nullable: false)]
+    #[ORM\JoinColumn(name: 'state_id', nullable: false)]
     private ?State $state = null;
 
     /**

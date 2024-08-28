@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PlaceRepository::class)]
-#[ORM\UniqueConstraint(columns: ['name', 'city'])]
+#[ORM\UniqueConstraint(columns: ['name', 'city_id'])]
 #[UniqueEntity(fields: ['name', 'city'], message: "Ce lieu existe déjà !")]
 class Place
 {
@@ -30,15 +30,16 @@ class Place
     #[ORM\Column(nullable: true)]
     private ?float $longitude = null;
 
-    #[ORM\ManyToOne(inversedBy: 'places')]
-    #[ORM\JoinColumn(name: 'city')]
-    private ?City $city = null;
 
     /**
      * @var Collection<int, Activity>
      */
     #[ORM\OneToMany(targetEntity: Activity::class, mappedBy: 'place')]
     private Collection $activities;
+
+    #[ORM\ManyToOne(inversedBy: 'places')]
+    #[ORM\JoinColumn(name: 'city_id', nullable: false)]
+    private ?City $city = null;
 
     public function __construct()
     {
@@ -98,18 +99,6 @@ class Place
         return $this;
     }
 
-    public function getCity(): ?City
-    {
-        return $this->city;
-    }
-
-    public function setCity(?City $city): static
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Activity>
      */
@@ -136,6 +125,18 @@ class Place
                 $activity->setPlace(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
 
         return $this;
     }
