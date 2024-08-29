@@ -3,11 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
-use App\Entity\State;
 use App\Form\ActivityType;
 use App\Repository\ActivityRepository;
+use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
-use ContainerFkQUUex\getStateRepositoryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,12 +16,37 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/activity', name: 'app_activity')]
 class ActivityController extends AbstractController
 {
-    #[Route('/', name: '_list', methods: ['GET'])]
-    public function index(ActivityRepository $activityRepository): Response
+    #[Route('/{withArchives}', name: '_list',requirements: ['withArchives' => 'true|false'])]
+    public function index(ActivityRepository $activityRepository, CampusRepository $campusRepository, Request $request, bool $withArchives = false): Response
     {
-        return $this->render('activity/list.html.twig', [
+        var_dump($request->getPayload()->all());
+
+        $attributes = ['campuses' => $campusRepository->findAll(), 'withArchives' => $withArchives];
+
+        $criteria = $request->getPayload()->all();
+        $criteria['is_archived'] = array_key_exists('withArchives',$criteria) ? $criteria['withArchives'] : '0';
+        $criteria['campus'] = array_key_exists('campus',$criteria) ? $criteria['campus']  : null;
+        $criteria['words'] = array_key_exists('words',$criteria) ? strlen($criteria['words'])>0?explode(' ',$criteria['words']):null : null;
+        $criteria['organizer'] = array_key_exists('organizer',$criteria) ? $criteria['organizer'] : null;
+        $criteria['registered'] = array_key_exists('registered',$criteria) ? $criteria['registered'] : null;
+        $criteria['forthcoming'] = array_key_exists('forthcoming',$criteria) ? $criteria['forthcoming'] : null;
+        $criteria['ongoing'] = array_key_exists('ongoing',$criteria) ? $criteria['ongoing'] : null;
+        $criteria['done'] = array_key_exists('done',$criteria) ? $criteria['done'] : null;
+
+        $activitiesPreFilter = $activityRepository->findByCriteria($criteria);
+
+        //if none filter leading to sublist
+        if(!$criteria['organizer'] and !$criteria['registered'] and !$criteria['forthcoming'] and !$criteria['ongoing'] and !$criteria['done']) {
+            return $this->render('activity/list.html.twig', array_merge($attributes,[
+                'activities' => $activitiesPreFilter,
+            ]));
+        }
+
+        //
+        return $this->render('activity/list.html.twig', array_merge($attributes,[
             'activities' => $activityRepository->findAll(),
-        ]);
+        ]));
+
     }
 
     #[Route('/create', name: '_create', methods: ['GET', 'POST'])]

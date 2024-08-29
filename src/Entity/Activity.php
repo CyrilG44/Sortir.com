@@ -43,7 +43,7 @@ class Activity
     #[ORM\Column(type: Types::BOOLEAN, options: ["default"=> "0"])]
     private ?bool $is_archived;
 
-    #[ORM\ManyToOne(inversedBy: 'activities')]
+    #[ORM\ManyToOne(inversedBy: 'activities_organizer')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $organizer = null;
 
