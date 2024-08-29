@@ -32,26 +32,19 @@ class ActivityListener
 
     public function update(Activity $activity): void
     {
-        $duractionHours = $activity->getDurationHours();
+        $durationHours = $activity->getDurationHours();
+        if(!$durationHours) {
+            $durationHours = 0;
+        }
         $startingDate = $activity->getStartingDate();
         $date = new \DateTime();
-        $startingDate->modify('+'.$duractionHours.'hour');
-
-
+        $startingDate->modify('+'.$durationHours.'hour');
 
         if($startingDate < $date->modify('-30 day')){
-
 
             $activity->setArchived(true);
                $this->em->persist($activity);
                $this->em->flush();
-
-
-
-
         }
     }
-
-
-
 }

@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
+#[ORM\EntityListeners([ActivityListener::class])]
 #[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place_id', 'organizer_id'])]
 #[UniqueEntity(fields: ['name', 'starting_date', 'place'], message: "Une sortie identique est déjà proposée !")]
 class Activity
