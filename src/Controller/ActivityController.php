@@ -167,7 +167,8 @@ class ActivityController extends AbstractController
                 $this->addFlash('success', message: 'Vous êtes enregistré(e) sur l\'activité suivante : ' . $activity->getName() . '.');
 
                 //controle -> si max participants atteint on change le status
-                if($nbParticipants >= $activity->getRegistrationMaxNb()){
+                $nbParticipants = $ar->countParticipant($activity->getId());
+                if($nbParticipants['nb'] >= $activity->getRegistrationMaxNb()){
                     $state = $sr->findOneBy(['name' => 'full']);
                     $activity->setState($state);
                     $entityManager->flush();
@@ -213,7 +214,7 @@ class ActivityController extends AbstractController
 
                 //controle -> si nb participants < max participants
                 $nbParticipants = $ar->countParticipant($activity->getId());
-                if($nbParticipants < $activity->getRegistrationMaxNb()){
+                if($nbParticipants['nb'] < $activity->getRegistrationMaxNb()){
                     $state = $sr->findOneBy(['name' => 'open']);
                     $activity->setState($state);
                     $entityManager->flush();
