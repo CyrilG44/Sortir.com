@@ -3,6 +3,7 @@
 namespace App\EntityListener;
 
 use App\Entity\Activity;
+use App\Repository\StateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
@@ -11,31 +12,37 @@ class ActivityListener
 {
 
     public function __construct(
-       private readonly EntityManagerInterface $em
-){}
+        private readonly StateRepository $stateRepository,
+        private readonly EntityManagerInterface $em
+    ) {}
 
-//    public function preUpdate(Activity $activity, LifecycleEventArgs $event)
-//    {
-//        $this->update($activity);
-//    }
+    public function prePersist(Activity $activity) :void
+    {
+        $state = $this->stateRepository->findOneBy(['name' => "draft"]);
 
-    public function preLoad(Activity $activity, LifecycleEventArgs $event)
+        if(!$activity->getState()) {
+            $activity->setState($state);
+        }
+    }
+
+    public function postLoad(Activity $activity, LifecycleEventArgs $event):void
     {
         $this->update($activity);
     }
 
     public function update(Activity $activity): void
     {
-        $duractionHours = $activity->getDurationHours();
-        $startingDate = $activity->getStartingDate();
+        if($activity->getDurationHours()){
+            $durationHours = $activity->getDurationHours();
+        }else{
+            $durationHours = 0;
+        }
+
+        $startingDate = clone $activity->getStartingDate();
         $date = new \DateTime();
-        //dd($duractionHours, $startingDate);
-        $startingDate->modify('+'.$duractionHours.' hour');
+        $startingDate->modify('+'.$durationHours.'hour');
 
-
-
-        if($startingDate < $date->modify('-30 day')){
-
+        if($startingDate < $date->modify('-30 day')&& $activity->isArchived() == false ){
 
             $activity->setArchived(true);
                $this->em->persist($activity);

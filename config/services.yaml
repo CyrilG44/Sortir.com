@@ -25,7 +25,8 @@ services:
 
     App\EntityListener\ActivityListener:
         arguments:
+            $stateRepository: '@App\Repository\StateRepository'
             $em: '@doctrine.orm.default_entity_manager'
         tags:
+            - { name: 'doctrine.orm.entity_listener', event: 'prePersist' }
             - {name: 'doctrine.orm.entity_listener', event: 'postLoad'}
-

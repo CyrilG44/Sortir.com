@@ -4,11 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Activity;
 use App\Entity\Registration;
-use App\Entity\State;
 use App\Form\ActivityType;
+use App\Form\CancelActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\RegistrationRepository;
 use App\Repository\StateRepository;
+use ContainerFkQUUex\getStateRepositoryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,10 +22,11 @@ class ActivityController extends AbstractController
     #[Route('/', name: '_list', methods: ['GET'])]
     public function index(ActivityRepository $activityRepository): Response
     {
+        $allActivities =$activityRepository->findAll();
         $date = new \DateTime();
 
         return $this->render('activity/list.html.twig', [
-            'activities' => $activityRepository->findAll(),
+            'activities' => $allActivities,
             'date' => $date,
         ]);
     }
@@ -57,7 +59,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: '_update', methods: ['GET', 'POST'])]
+    #[Route('/update/{id}', name: '_update', methods: ['GET', 'POST'])]
     public function edit(Request $request, Activity $activity, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ActivityType::class, $activity);
@@ -66,7 +68,9 @@ class ActivityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('Sortie Modifié avec succès !', 'Une sortie a été mise à jour !');
+
+            return $this->redirectToRoute('app_activity_list');
         }
 
         return $this->render('activity/update.html.twig', [
@@ -87,11 +91,27 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/{id}/cancel', name: '_cancel', methods: ['GET', 'POST'])]
-    public function cancel(Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
+    public function cancel(Request $request, Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
     {
-        $state = $stateRepository->findOneBy(['name' => 'cancelled']);
-        $activity->setState($state);
-        $entityManager->flush();
+
+        $form = $this->createForm(CancelActivityType::class,$activity);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $state = $stateRepository->findOneBy(['name' => 'cancelled']);
+            $activity->setState($state);
+            $entityManager->flush();
+
+
+
+
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('activity/_cancel.html.twig', [
+            'activity' => $activity,
+            'form' => $form,
+        ]);
 
 
         return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
