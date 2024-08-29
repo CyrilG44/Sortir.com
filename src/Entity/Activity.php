@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\EntityListener\ActivityListener;
 use App\Repository\ActivityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
