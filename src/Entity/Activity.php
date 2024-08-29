@@ -37,6 +37,7 @@ class Activity
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\Type(type: "\DateTimeInterface", message: 'Veuillez saisir une date valide')]
     #[Assert\NotBlank(message: "Veuillez remplir ce champ")]
     #[Assert\GreaterThan(value: 'today', message: "Veuillez saisir une date postérieure à celle d'aujourd'hui")]
     private ?\DateTimeInterface $starting_date = null;
@@ -47,6 +48,7 @@ class Activity
     private ?int $duration_hours = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\Type(type: "\DateTimeInterface", message: 'Veuillez saisir une date valide')]
     #[Assert\NotBlank(message: "Veuillez remplir ce champ")]
     #[Assert\LessThan(propertyPath: 'starting_date', message: "Veuillez saisir une date antérieure à celle du départ de l'activité")]
     private ?\DateTimeInterface $registration_limit_date = null;
