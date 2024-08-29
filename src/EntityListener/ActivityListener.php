@@ -19,30 +19,28 @@ class ActivityListener
 //        $this->update($activity);
 //    }
 
-    public function postLoad(Activity $activity, LifecycleEventArgs $event)
+    public function postLoad(Activity $activity, LifecycleEventArgs $event):void
     {
         $this->update($activity);
     }
 
     public function update(Activity $activity): void
     {
-        $duractionHours = $activity->getDurationHours();
+        if($activity->getDurationHours()){
+            $duractionHours = $activity->getDurationHours();
+        }else{
+            $duractionHours = 0;
+        }
+
         $startingDate = $activity->getStartingDate();
         $date = new \DateTime();
         $startingDate->modify('+'.$duractionHours.'hour');
 
-
-
-        if($startingDate < $date->modify('-30 day')){
-
+        if($startingDate < $date->modify('-30 day')&& $activity->isArchived() == false ){
 
             $activity->setArchived(true);
                $this->em->persist($activity);
                $this->em->flush();
-
-
-
-
         }
     }
 
