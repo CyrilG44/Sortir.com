@@ -35,6 +35,7 @@ class ActivityController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $activity = new Activity();
+        $activity->setOrganizer($this->getUser());
         $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
 

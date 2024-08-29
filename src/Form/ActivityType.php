@@ -51,21 +51,11 @@ class ActivityType extends AbstractType
                 'label' => "Url de la photo",
                 'required' => false,
             ])
-            ->add('organizer', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'pseudo',
-                'label' => "Organisateur",
-                'required' => true,
-            ])
             ->add('place', EntityType::class, [
                 'class' => Place::class,
                 'choice_label' => 'name',
                 'label' => "Lieu de la sortie",
                 'required' => true,
-            ])
-
-            ->add('cancelReason', null,[
-                'required' => true
             ])
         ;
     }
