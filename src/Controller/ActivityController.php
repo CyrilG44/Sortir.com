@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Activity;
 use App\Entity\Registration;
+use App\Entity\User;
 use App\Form\ActivityType;
 use App\Form\CancelActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\RegistrationRepository;
 use App\Repository\StateRepository;
+use App\Repository\UserRepository;
+use Container7dx22SR\getUserRepositoryService;
 use ContainerFkQUUex\getStateRepositoryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -189,6 +192,7 @@ class ActivityController extends AbstractController
     #[Route('/unsubscribe/{id}', name: '_unsubscribe', methods: ['GET'])]
     public function unsubscribe(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository): Response
     {
+
         if ($this->isCsrfTokenValid('unsubscribe' . $activity->getId(), $request->query->get('token'))) {
             $user = $this->getUser();
 
@@ -217,5 +221,19 @@ class ActivityController extends AbstractController
 
             return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
         }
+    }
+
+    #[Route('/organizerProfile/{id}', name: '_organizerProfile', methods: ['GET'])]
+    public function organizerProfile(Activity $activity): Response
+    {
+
+        $user = $activity->getOrganizer();
+
+
+
+        return $this->render('activity/organizerProfile.html.twig', [
+            'user' => $user,
+            'activity' => $activity,
+        ]);
     }
 }

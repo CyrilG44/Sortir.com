@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+<div>
+     <h1>{{ user.pseudo }}</h1>
+</div>
+     <div>
+          <p> Prénom :</p> <span>{{ user.firstName }}</span>
+    </div>
+     <div>
+          <p> Nom :</p> <span>{{ user.lastName }}</span>
+     </div>
+     <div>
+          <p> Téléphone :</p> <span>{{ user.phone }}</span>
+     </div>
+     <div>
+          <p> Email :</p> <span>{{ user.email }}</span>
+     </div>
+
+
+     <div>
+          <p> Site organisateur :</p> <span>{{ activity.organizer.campus.name }}</span>
+     </div>
+
+
+{% endblock %}

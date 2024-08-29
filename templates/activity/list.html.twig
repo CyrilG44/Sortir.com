@@ -21,6 +21,7 @@
                 <th>Date limite d'inscription à la sortie</th>
                 <th>Nombre d'inscription maximum à la sortie</th>
                 <th>Description de la sortie</th>
+                <th>Organisateur</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -33,6 +34,7 @@
                 <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ activity.registrationMaxNb }}</td>
                 <td>{{ activity.description }}</td>
+                <td><a href="{{ path('app_activity_organizerProfile',{'id' : activity.id}) }}">{{ activity.organizer.pseudo }}</a></td>
 
 
                 {% if
@@ -54,8 +56,9 @@
                         class="btn btn-danger" href="{{ path('app_activity_unsubscribe', {'id': activity.id, 'token':csrf_token('unsubscribe'~activity.id) }) }}"
                         onclick="return confirm('Merci de confirmer votre désinscription en cliquant sur OK')">Se désister</a>
                 </td>
-
-
+                <td>
+                <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">cancel</a>
+                </td>
 
 
                 <!--
@@ -64,7 +67,7 @@
                 <td>
                     <a href="{{ path('app_activity_detail', {'id': activity.id}) }}">détail</a>
                     <a href="{{ path('app_activity_update', {'id': activity.id}) }}">Update</a>
-                    <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">cancel</a>
+
                     <a href="">S'inscrire</a>
                     <a href="">Se désinscrire</a>
                 </td>
