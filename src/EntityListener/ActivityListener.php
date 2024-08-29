@@ -4,23 +4,54 @@ namespace App\EntityListener;
 
 use App\Entity\Activity;
 use App\Repository\StateRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
+
 
 class ActivityListener
 {
 
     public function __construct(
-        private readonly StateRepository $stateRepository
+        private readonly StateRepository $stateRepository,
+        private readonly EntityManagerInterface $em
     ) {}
 
     public function prePersist(Activity $activity) :void
     {
-        # dd($activity->getState());
-        $state = $this->stateRepository->findOneBy(['name' => "DRAFT"]);
+        $state = $this->stateRepository->findOneBy(['name' => "draft"]);
 
         if(!$activity->getState()) {
             $activity->setState($state);
         }
-
     }
+
+    public function postLoad(Activity $activity, LifecycleEventArgs $event)
+    {
+        $this->update($activity);
+    }
+
+    public function update(Activity $activity): void
+    {
+        $duractionHours = $activity->getDurationHours();
+        $startingDate = $activity->getStartingDate();
+        $date = new \DateTime();
+        $startingDate->modify('+'.$duractionHours.'hour');
+
+
+
+        if($startingDate < $date->modify('-30 day')){
+
+
+            $activity->setArchived(true);
+               $this->em->persist($activity);
+               $this->em->flush();
+
+
+
+
+        }
+    }
+
+
 
 }
