@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
-use App\Entity\State;
+use App\Entity\Registration;
 use App\Form\ActivityType;
 use App\Form\CancelActivityType;
 use App\Repository\ActivityRepository;
-use App\Repository\CampusRepository;
+use App\Repository\RegistrationRepository;
 use App\Repository\StateRepository;
+use ContainerFkQUUex\getStateRepositoryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +24,11 @@ class ActivityController extends AbstractController
     public function index(ActivityRepository $activityRepository): Response
     {
         $allActivities =$activityRepository->findAll();
+        $date = new \DateTime();
 
         return $this->render('activity/list.html.twig', [
             'activities' => $allActivities,
+            'date' => $date,
         ]);
     }
 
@@ -33,6 +36,7 @@ class ActivityController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $activity = new Activity();
+        $activity->setOrganizer($this->getUser());
         $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
 
@@ -114,5 +118,104 @@ class ActivityController extends AbstractController
         }
 
 
+        return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/signUp/{id}', name: '_signup', methods: ['GET'])]
+    public function signUp(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar): Response
+    {
+
+        if($this->isCsrfTokenValid('signup'.$activity->getId(), $request->query->get('token'))) {
+
+            //controle statut activité
+            if($activity->getState()->getName() !== 'open'){
+                $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. L\'activité n\'est pas ouverte !');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+
+            //controle date limite d'inscription
+            $date = new \DateTime();
+            if($activity->getRegistrationLimitDate() < $date){
+                $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Date d\'inscription dépassée !');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+
+            //controle nombre max participants
+            $nbParticipants = $ar->countParticipant($activity->getId());
+
+            if($nbParticipants['nb'] >= $activity->getRegistrationMaxNb()){
+                $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Plus de place disponible !');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+
+            $user = $this->getUser();
+
+            $registration = new Registration();
+            $registration->setActivity($activity);
+            $registration->setUser($user);
+            $registration->setRegistrationDate();
+
+            $registrationDB = $registrationRepository->findOneBy([
+                'activity' => $activity,
+                'user' => $user
+            ]);
+
+            if($registrationDB === null){
+
+                $entityManager->persist($registration);
+                $entityManager->flush();
+
+                $this->addFlash('success', message: 'Vous êtes enregistré(e) sur l\'activité suivante : ' . $activity->getName() . '.');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+
+            else{
+                $this->addFlash('error', message: 'Vous êtes déjà enregistré(e) sur l\'activité suivante : '.$activity->getName().'.');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+        else{
+            $this->addFlash('error', message: 'Action illégale, vos papiers s\'il vous plaît !');
+
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    #[Route('/unsubscribe/{id}', name: '_unsubscribe', methods: ['GET'])]
+    public function unsubscribe(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository): Response
+    {
+        if ($this->isCsrfTokenValid('unsubscribe' . $activity->getId(), $request->query->get('token'))) {
+            $user = $this->getUser();
+
+            $registrationDB = $registrationRepository->findOneBy([
+                'activity' => $activity,
+                'user' => $user
+            ]);
+
+            if($registrationDB === null){
+                $this->addFlash('error', message: 'Désinscription impossible ! Vous n\'êtes pas inscrit(e) sur l\'activité suivante : '.$activity->getName().'.');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+
+            }
+            else {
+                $entityManager->remove($registrationDB);
+                $entityManager->flush();
+
+                $this->addFlash('success', message: 'Vous êtes désinscrit sur l\'activité suivante : ' . $activity->getName() . '.');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+        else{
+            $this->addFlash('error', message: 'Action illégale !');
+
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
     }
 }
