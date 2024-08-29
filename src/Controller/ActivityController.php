@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use function Sodium\add;
 
 #[Route('/activity', name: 'app_activity')]
 class ActivityController extends AbstractController
@@ -90,18 +91,17 @@ class ActivityController extends AbstractController
     #[Route('/{id}/cancel', name: '_cancel', methods: ['GET', 'POST'])]
     public function cancel(Request $request, Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
     {
+        if($activity->getState()->getId() == 1 || $activity->getState()->getId() == 2 || $activity->getState()->getId() == 3){
+
 
         $form = $this->createForm(CancelActivityType::class,$activity);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() ) {
             $state = $stateRepository->findOneBy(['name' => 'cancelled']);
             $activity->setState($state);
             $entityManager->flush();
-
-
-
-
+            $this->addFlash('success', "Success L'activité a bien été cancel" );
             return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -109,6 +109,9 @@ class ActivityController extends AbstractController
             'activity' => $activity,
             'form' => $form,
         ]);
+        }else {
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
 
 
     }

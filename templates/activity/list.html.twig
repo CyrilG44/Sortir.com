@@ -5,6 +5,13 @@
 {% block body %}
     <h1>Liste des sorties</h1>
 
+    {% for type in ['success', 'error'] %}
+        {% for message in app.flashes(type) %}
+            <div class="alert alert-{{ type == 'error' ? 'danger' : type }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
     <table class="table">
         <thead>
             <tr>
