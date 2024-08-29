@@ -23,15 +23,19 @@ class ActivityType extends AbstractType
             ])
             ->add('starting_date', null, [
                 'widget' => 'single_text',
+                'input' => 'datetime_immutable',
+                'invalid_message' => 'Veuillez saisir une date valide',
                 'label' => "Date de la sortie",
                 'required' => true,
             ])
-            ->add('duration', null,  [
+            ->add('duration_hours', null,  [
                 'label' => "Durée de la sortie (en heure)",
                 'required' => false,
             ])
             ->add('registration_limit_date', null, [
                 'widget' => 'single_text',
+                'input' => 'datetime_immutable',
+                'invalid_message' => 'Veuillez saisir une date valide',
                 'label' => "Date limite d'inscription",
                 'required' => true,
             ])

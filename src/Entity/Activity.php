@@ -9,44 +9,77 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ActivityRepository::class)]
-#[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place_id', 'state_id'])]
-#[UniqueEntity(fields: ['name', 'starting_date', 'place', 'state'], message: "Une sortie identique est déjà proposée !")]
 #[ORM\EntityListeners([ActivityListener::class])]
+#[ORM\UniqueConstraint(columns: ['name', 'starting_date', 'place_id', 'organizer_id'])]
+#[UniqueEntity(fields: ['name', 'starting_date', 'place'], message: "Une sortie identique est déjà proposée !")]
 class Activity
 {
+
+    private const IS_ARCHIVED = false;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\Type(type: 'string', message: "Veuillez renseigner une chaine de caractère")]
+    #[Assert\NotBlank(message: "Veuillez remplir ce champ")]
+    #[Assert\Length(
+        min: 3,
+        minMessage: "C'est trop court, il faut {{ limit }} caractère minimum",
+        max: 30,
+        maxMessage: "C'est trop long, il faut {{ limit }} caractère maximum",
+    )]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\Type(type: "\DateTimeInterface", message: 'Veuillez saisir une date valide')]
+    #[Assert\NotBlank(message: "Veuillez remplir ce champ")]
+    #[Assert\GreaterThan(value: 'today', message: "Veuillez saisir une date postérieure à celle d'aujourd'hui")]
     private ?\DateTimeInterface $starting_date = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type(type: 'int', message: "Veuillez renseigner un nombre")]
+    #[Assert\Range(max: 24, maxMessage: "L'activité ne peut pas durer plus de 24 heures")]
     private ?int $duration_hours = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\Type(type: "\DateTimeInterface", message: 'Veuillez saisir une date valide')]
+    #[Assert\NotBlank(message: "Veuillez remplir ce champ")]
+    #[Assert\LessThan(propertyPath: 'starting_date', message: "Veuillez saisir une date antérieure à celle du départ de l'activité")]
     private ?\DateTimeInterface $registration_limit_date = null;
 
     #[ORM\Column]
+    #[Assert\Type(type: 'int', message: "Veuillez renseigner un nombre")]
+    #[Assert\NotBlank(message: "Veuillez remplir ce champ")]
     private ?int $registration_max_nb = null;
 
     #[ORM\Column(length: 500, nullable: true)]
+    #[Assert\Type(type: 'string', message: "Veuillez renseigner une chaine de caractère")]
+    #[Assert\Length(
+        max: 500,
+        maxMessage: "C'est trop long, il faut {{ limit }} caractère maximum",
+    )]
     private ?string $description = null;
 
     #[ORM\Column(length: 250, nullable: true)]
+    #[Assert\Type(type: 'string', message: "Veuillez renseigner une chaine de caractère")]
+    #[Assert\Length(
+        max: 250,
+        maxMessage: "C'est trop long, il faut {{ limit }} caractère maximum",
+    )]
     private ?string $photo_url = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ["default"=> "0"])]
-    private ?bool $is_archived;
+    #[ORM\Column]
+    #[Assert\Type('bool')]
+    private ?bool $is_archived = self::IS_ARCHIVED;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'organizer_id', nullable: false)]
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]
