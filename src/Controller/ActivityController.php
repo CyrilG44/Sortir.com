@@ -54,7 +54,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: '_update', methods: ['GET', 'POST'])]
+    #[Route('/update/{id}', name: '_update', methods: ['GET', 'POST'])]
     public function edit(Request $request, Activity $activity, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ActivityType::class, $activity);
@@ -63,7 +63,9 @@ class ActivityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('Sortie Modifié avec succès !', 'Une sortie a été mise à jour !');
+
+            return $this->redirectToRoute('app_activity_list');
         }
 
         return $this->render('activity/update.html.twig', [
