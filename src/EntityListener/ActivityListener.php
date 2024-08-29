@@ -38,7 +38,7 @@ class ActivityListener
             $durationHours = 0;
         }
 
-        $startingDate = $activity->getStartingDate();
+       $startingDate = Clone $activity->getStartingDate();
         $date = new \DateTime();
         $startingDate->modify('+'.$durationHours.'hour');
 

@@ -1,0 +1,19 @@
+<h1>cancel</h1>
+
+<div>
+    <p> Nom de la sortie:</p> <span>{{ activity.name }}</span>
+</div>
+
+<div>
+    <p> Date de la sortie:</p> <span>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : ''}}</span>
+</div>
+
+<div>
+    <p> Site organisateur :</p> <span>{{ activity.organizer.campus.name }}</span>
+</div>
+
+<div>
+    <p> Nom de la sortie:</p> <span>{{ activity.name }}</span>
+</div>
+
+{{ include('activity/_form.html.twig', {'button_label': 'Update'}) }}

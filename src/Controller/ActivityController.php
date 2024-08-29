@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Activity;
 use App\Entity\State;
 use App\Form\ActivityType;
+use App\Form\CancelActivityType;
 use App\Repository\ActivityRepository;
+use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -86,11 +88,26 @@ class ActivityController extends AbstractController
     #[Route('/{id}/cancel', name: '_cancel', methods: ['GET', 'POST'])]
     public function cancel(Request $request, Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
     {
-        $state = $stateRepository->findOneBy(['name' => 'cancelled']);
-        $activity->setState($state);
-        $entityManager->flush();
+
+        $form = $this->createForm(CancelActivityType::class,$activity);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $state = $stateRepository->findOneBy(['name' => 'cancelled']);
+            $activity->setState($state);
+            $entityManager->flush();
 
 
-        return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+
+
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('activity/_cancel.html.twig', [
+            'activity' => $activity,
+            'form' => $form,
+        ]);
+
+
     }
 }
