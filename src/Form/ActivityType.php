@@ -57,10 +57,6 @@ class ActivityType extends AbstractType
                 'label' => "Lieu de la sortie",
                 'required' => true,
             ])
-
-            ->add('cancelReason', null,[
-                'required' => true
-            ])
         ;
     }
 
