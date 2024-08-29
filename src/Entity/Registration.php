@@ -27,10 +27,10 @@ class Registration
     {
         return $this->registration_date;
     }
-
-    public function setRegistrationDate(\DateTimeInterface $registration_date): static
+    #[ORM\PreUpdate]
+    public function setRegistrationDate(): static
     {
-        $this->registration_date = $registration_date;
+        $this->registration_date = new \DateTime();
 
         return $this;
     }
