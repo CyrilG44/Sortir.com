@@ -23,8 +23,6 @@ class ActivityController extends AbstractController
     {
         $date = new \DateTime();
 
-
-
         return $this->render('activity/list.html.twig', [
             'activities' => $activityRepository->findAll(),
             'date' => $date,
@@ -100,7 +98,7 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/signUp/{id}', name: '_signup', methods: ['GET'])]
-    public function signUp(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository): Response
+    public function signUp(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar): Response
     {
 
         if($this->isCsrfTokenValid('signup'.$activity->getId(), $request->query->get('token'))) {
@@ -121,8 +119,9 @@ class ActivityController extends AbstractController
             }
 
             //controle nombre max participants
-            $nbParticipants = $registrationRepository->count();
-            if($nbParticipants >= $activity->getRegistrationMaxNb()){
+            $nbParticipants = $ar->countParticipant($activity->getId());
+
+            if($nbParticipants['nb'] >= $activity->getRegistrationMaxNb()){
                 $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Plus de place disponible !');
 
                 return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
@@ -181,7 +180,6 @@ class ActivityController extends AbstractController
 
             }
             else {
-
                 $entityManager->remove($registrationDB);
                 $entityManager->flush();
 
@@ -196,5 +194,4 @@ class ActivityController extends AbstractController
             return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
         }
     }
-
 }

@@ -27,6 +27,7 @@
                 <td>{{ activity.registrationMaxNb }}</td>
                 <td>{{ activity.description }}</td>
 
+
                 {% if
                     activity.registrationLimitDate > date and
                     activity.state.name == 'open' and
@@ -58,7 +59,7 @@
                     <a href="{{ path('app_activity_update', {'id': activity.id}) }}">edit</a>
                     <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">cancel</a>
                 </td>
-
+            -->
             </tr>
         {% else %}
             <tr>

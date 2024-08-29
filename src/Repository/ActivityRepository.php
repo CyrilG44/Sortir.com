@@ -17,6 +17,18 @@ class ActivityRepository extends ServiceEntityRepository
         parent::__construct($registry, Activity::class);
     }
 
+    public function countParticipant(int $id) {
+        return $this->createQueryBuilder('a')
+            ->select('count(u) as nb' )
+            ->leftjoin('a.registrations', 'r')
+            ->leftJoin('r.user', 'u')
+            ->where('a.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
 
     //    /**
     //     * @return Activity[] Returns an array of Activity objects

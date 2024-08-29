@@ -19,7 +19,7 @@ class ActivityListener
 //        $this->update($activity);
 //    }
 
-    public function postLoad(Activity $activity, LifecycleEventArgs $event)
+    public function preLoad(Activity $activity, LifecycleEventArgs $event)
     {
         $this->update($activity);
     }
@@ -29,7 +29,8 @@ class ActivityListener
         $duractionHours = $activity->getDurationHours();
         $startingDate = $activity->getStartingDate();
         $date = new \DateTime();
-        $startingDate->modify('+'.$duractionHours.'hour');
+        //dd($duractionHours, $startingDate);
+        $startingDate->modify('+'.$duractionHours.' hour');
 
 
 
