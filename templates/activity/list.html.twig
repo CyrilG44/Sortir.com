@@ -27,6 +27,33 @@
                 <td>{{ activity.registrationMaxNb }}</td>
                 <td>{{ activity.description }}</td>
 
+
+                {% if
+                    activity.registrationLimitDate > date and
+                    activity.state.name == 'open' and
+                    activity.registrations.count < activity.registrationMaxNb
+                %}
+                    <td>
+                        <a
+                            class="btn btn-primary" href="{{ path('app_activity_signup', {'id' : activity.id, 'token':csrf_token('signup'~activity.id)}) }}"
+                            onclick="return confirm('Merci de confirmer votre inscription en cliquant sur OK')">S'inscrire
+                        </a>
+                    </td>
+                {% endif %}
+
+
+                <td>
+                    <a
+                        class="btn btn-danger" href="{{ path('app_activity_unsubscribe', {'id': activity.id, 'token':csrf_token('unsubscribe'~activity.id) }) }}"
+                        onclick="return confirm('Merci de confirmer votre désinscription en cliquant sur OK')">Se désister</a>
+                </td>
+
+
+
+
+                <!--
+
+                <td></td>
                 <td>
                     <a href="{{ path('app_activity_detail', {'id': activity.id}) }}">détail</a>
                     <a href="{{ path('app_activity_update', {'id': activity.id}) }}">Update</a>
@@ -34,13 +61,22 @@
                     <a href="">S'inscrire</a>
                     <a href="">Se désinscrire</a>
                 </td>
-
+            -->
             </tr>
         {% else %}
             <tr>
                 <td colspan="10">no records found</td>
             </tr>
         {% endfor %}
+
+        {% for type in ['success', 'error'] %}
+            {% for message in app.flashes(type) %}
+                <div class="alert alert-{{ type == 'error' ? 'danger' : type }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         </tbody>
     </table>
 

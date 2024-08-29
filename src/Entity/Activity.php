@@ -96,6 +96,9 @@ class Activity
     #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'activity')]
     private Collection $registrations;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $cancelReason = null;
+
     public function __construct()
     {
         $this->registrations = new ArrayCollection();
@@ -264,6 +267,18 @@ class Activity
                 $registration->setActivity(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCancelReason(): ?string
+    {
+        return $this->cancelReason;
+    }
+
+    public function setCancelReason(?string $cancelReason): static
+    {
+        $this->cancelReason = $cancelReason;
 
         return $this;
     }

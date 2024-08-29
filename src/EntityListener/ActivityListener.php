@@ -47,6 +47,13 @@ class ActivityListener
             $activity->setArchived(true);
                $this->em->persist($activity);
                $this->em->flush();
+
+
+
+
         }
     }
+
+
+
 }
