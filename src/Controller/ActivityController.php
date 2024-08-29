@@ -112,13 +112,10 @@ class ActivityController extends AbstractController
             'activity' => $activity,
             'form' => $form,
         ]);
-
-
-        return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/signUp/{id}', name: '_signup', methods: ['GET'])]
-    public function signUp(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar): Response
+    public function signUp(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar, StateRepository $sr): Response
     {
 
         if($this->isCsrfTokenValid('signup'.$activity->getId(), $request->query->get('token'))) {
@@ -140,12 +137,12 @@ class ActivityController extends AbstractController
 
             //controle nombre max participants
             $nbParticipants = $ar->countParticipant($activity->getId());
-
             if($nbParticipants['nb'] >= $activity->getRegistrationMaxNb()){
                 $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Plus de place disponible !');
 
                 return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
             }
+
 
             $user = $this->getUser();
 
@@ -154,27 +151,37 @@ class ActivityController extends AbstractController
             $registration->setUser($user);
             $registration->setRegistrationDate();
 
+            //on controle si l'user est déjà inscrit
             $registrationDB = $registrationRepository->findOneBy([
                 'activity' => $activity,
                 'user' => $user
             ]);
-
+            //pas inscrit
             if($registrationDB === null){
 
+                //on l'inscrit
                 $entityManager->persist($registration);
                 $entityManager->flush();
 
                 $this->addFlash('success', message: 'Vous êtes enregistré(e) sur l\'activité suivante : ' . $activity->getName() . '.');
 
+                //controle -> si max participants atteint on change le status
+                if($nbParticipants >= $activity->getRegistrationMaxNb()){
+                    $state = $sr->findOneBy(['name' => 'full']);
+                    $activity->setState($state);
+                    $entityManager->flush();
+                }
+
                 return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
             }
-
+            //déjà inscrit -> message d'erreur
             else{
                 $this->addFlash('error', message: 'Vous êtes déjà enregistré(e) sur l\'activité suivante : '.$activity->getName().'.');
 
                 return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
             }
         }
+        //tentative frauduleuse de magouillage -> message d'erreur
         else{
             $this->addFlash('error', message: 'Action illégale, vos papiers s\'il vous plaît !');
 
@@ -183,7 +190,7 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/unsubscribe/{id}', name: '_unsubscribe', methods: ['GET'])]
-    public function unsubscribe(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository): Response
+    public function unsubscribe(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar, StateRepository $sr): Response
     {
         if ($this->isCsrfTokenValid('unsubscribe' . $activity->getId(), $request->query->get('token'))) {
             $user = $this->getUser();
@@ -202,6 +209,14 @@ class ActivityController extends AbstractController
             else {
                 $entityManager->remove($registrationDB);
                 $entityManager->flush();
+
+                //controle -> si nb participants < max participants
+                $nbParticipants = $ar->countParticipant($activity->getId());
+                if($nbParticipants < $activity->getRegistrationMaxNb()){
+                    $state = $sr->findOneBy(['name' => 'open']);
+                    $activity->setState($state);
+                    $entityManager->flush();
+                }
 
                 $this->addFlash('success', message: 'Vous êtes désinscrit sur l\'activité suivante : ' . $activity->getName() . '.');
 
