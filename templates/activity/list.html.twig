@@ -34,7 +34,7 @@
                 <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ activity.registrationMaxNb }}</td>
                 <td>{{ activity.description }}</td>
-                <td><a href="{{ path('app_activity_organizerProfile',{'id' : activity.id}) }}">{{ activity.organizer.pseudo }}</a></td>
+                <td>{{ activity.organizer.pseudo }}</td>
 
 
                 {% if

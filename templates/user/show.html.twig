@@ -28,12 +28,20 @@
                 <th>Mail</th>
                 <td>{{ user.email }}</td>
             </tr>
+            <tr>
+                <th>Site de rattachement :</th>
+                <td>{{ user.campus.name }}</td>
+            </tr>
         </tbody>
     </table>
 
 
 
-    <a href="{{ path('app_user_edit') }}">modifier</a>
 
+    {% if  user.id == app.user.id%}
+    <a href="{{ path('app_user_edit') }}">modifier</a>
+    {% endif %}
 
 {% endblock %}
+
+

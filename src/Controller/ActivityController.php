@@ -12,13 +12,12 @@ use App\Repository\RegistrationRepository;
 use App\Repository\StateRepository;
 use App\Repository\UserRepository;
 use Container7dx22SR\getUserRepositoryService;
-use ContainerFkQUUex\getStateRepositoryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use function Sodium\add;
+
 
 #[Route('/activity', name: 'app_activity')]
 class ActivityController extends AbstractController
@@ -239,17 +238,5 @@ class ActivityController extends AbstractController
         }
     }
 
-    #[Route('/organizerProfile/{id}', name: '_organizerProfile', methods: ['GET'])]
-    public function organizerProfile(Activity $activity): Response
-    {
 
-        $user = $activity->getOrganizer();
-
-
-
-        return $this->render('activity/organizerProfile.html.twig', [
-            'user' => $user,
-            'activity' => $activity,
-        ]);
-    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Activity;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -73,6 +74,17 @@ class UserController extends AbstractController
         return $this->render('user/edit.html.twig', [
             'user' => $user,
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/profile/{id}', name: '_profile', methods: ['GET'])]
+    public function organizerProfile(User $user): Response
+    {
+
+        return $this->render('user/show.html.twig', [
+            'user' => $user,
+
+
         ]);
     }
 
