@@ -16,17 +16,17 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/activity', name: 'app_activity')]
 class ActivityController extends AbstractController
 {
-    #[Route('/{withArchives}', name: '_list',requirements: ['withArchives' => 'true|false'])]
+    #[Route('/{withArchives}', name: '_list',requirements: ['withArchives' => 'true'])]
     public function index(ActivityRepository $activityRepository, CampusRepository $campusRepository, Request $request, bool $withArchives = false): Response
     {
-        var_dump($request->getPayload()->all());
 
-        $attributes = ['campuses' => $campusRepository->findAll(), 'withArchives' => $withArchives];
 
-        $criteria = $request->getPayload()->all();
-        $criteria['is_archived'] = array_key_exists('withArchives',$criteria) ? $criteria['withArchives'] : '0';
-        $criteria['campus'] = array_key_exists('campus',$criteria) ? $criteria['campus']  : null;
-        $criteria['words'] = array_key_exists('words',$criteria) ? strlen($criteria['words'])>0?explode(' ',$criteria['words']):null : null;
+        $criteria = $request->getPayload()->all(); //filled only in case of POST
+        $criteria['withArchives'] = $withArchives;
+        $criteria['campus'] = array_key_exists('campus',$criteria) ? $campusRepository->find($criteria['campus'])  : null; //$criteria['campus']>0?$criteria['campus']:null
+        $criteria['word'] = array_key_exists('word',$criteria) ? strlen($criteria['word'])>0?$criteria['word']:null : null;
+        $criteria['startingBefore'] = array_key_exists('startingBefore',$criteria) ? $criteria['startingBefore']  : null;
+        $criteria['startingAfter'] = array_key_exists('startingAfter',$criteria) ? $criteria['startingAfter']  : null;
         $criteria['organizer'] = array_key_exists('organizer',$criteria) ? $criteria['organizer'] : null;
         $criteria['registered'] = array_key_exists('registered',$criteria) ? $criteria['registered'] : null;
         $criteria['forthcoming'] = array_key_exists('forthcoming',$criteria) ? $criteria['forthcoming'] : null;
@@ -35,6 +35,10 @@ class ActivityController extends AbstractController
 
         $activitiesPreFilter = $activityRepository->findByCriteria($criteria);
 
+        $criteria['startingAfter'] = $criteria['startingAfter'] ? new \DateTime($criteria['startingAfter']):null;
+        $criteria['startingBefore']= $criteria['startingBefore'] ? new \DateTime($criteria['startingBefore']):null;
+        $attributes = ['campusList' => $campusRepository->findAll(), 'criteria' => $criteria];
+
         //if none filter leading to sublist
         if(!$criteria['organizer'] and !$criteria['registered'] and !$criteria['forthcoming'] and !$criteria['ongoing'] and !$criteria['done']) {
             return $this->render('activity/list.html.twig', array_merge($attributes,[
@@ -42,9 +46,35 @@ class ActivityController extends AbstractController
             ]));
         }
 
-        //
+        //else - if at least one filter then sublist to merge at the end
+        $finalList = [];
+        if($criteria['organizer']){
+            $finalList = array_merge($finalList,array_filter($activitiesPreFilter, fn($a) => $a->getOrganizer()->getId()==$this->getUser()->getId()));
+        }
+        if($criteria['registered']){
+            $tempList = array_filter($activitiesPreFilter, function($a) {
+                if(count($a->getRegistrations())>0){
+                    foreach($a->getRegistrations() as $registration){
+                        if($registration->getUser()->getId()==$this->getUser()->getId()){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
+            $finalList = array_merge($finalList,$tempList);
+        }
+        if($criteria['forthcoming']){
+            $finalList = array_merge($finalList,array_filter($activitiesPreFilter, fn($a) => in_array($a->getState()->getName(),['draft','open','full','pending'])));
+        }
+        if($criteria['ongoing']){
+            $finalList = array_merge($finalList,array_filter($activitiesPreFilter, fn($a) => $a->getState()->getName()=='ongoing'));
+        }
+        if($criteria['done']){
+            $finalList = array_merge($finalList,array_filter($activitiesPreFilter, fn($a) => $a->getState()->getName()=='done'));
+        }
         return $this->render('activity/list.html.twig', array_merge($attributes,[
-            'activities' => $activityRepository->findAll(),
+            'activities' => array_map(fn($a)=>unserialize($a),array_unique(array_map(fn($a)=>serialize($a),$finalList))),
         ]));
 
     }

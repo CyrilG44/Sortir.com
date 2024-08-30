@@ -6,22 +6,23 @@
     <h1>Sorties</h1>
 
     <div>
-        <form action="{{ path('app_activity_list') }}" method="POST">
+        <form action="{{ criteria['withArchives'] ? path('app_activity_list', {'withArchives':'true'}):path('app_activity_list') }}" method="POST">
             <div>
                 <div>
                     <label for="campus">Site</label>
                     <select name="campus" id="campus">
-                        {% for campus in campuses %}
+                        <option value="-1"></option>
+                        {% for campus in campusList %}
                             <option value="{{ campus.id }}">{{ campus.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <label for="words">Mot-clé(s)</label>
-                    <input id="words" type="text" name="words" placeholder="Rechercher par mot-clé(s)"/>
+                    <label for="word">Mot-clé(s)</label>
+                    <input id="word" type="text" name="word" placeholder="Rechercher par mot-clé"/>
                 </div>
                 <div>
-                    Entre <input type="date" name="startingOn"/> et <input type="date" name="endingOn">
+                    Entre <input type="date" name="startingAfter"/> et <input type="date" name="startingBefore">
                 </div>
             </div>
             <div>
@@ -47,7 +48,7 @@
                 </div>
             </div>
             <div>
-                <input type="hidden" name="withArchives" value="{{ withArchives ? 1:0 }}"/>
+                <button type="reset">Effacer</button>
                 <button type="submit">Rechercher</button>
             </div>
 
@@ -55,6 +56,14 @@
     </div>
 
     <div>
+        <h2>Résultat(s) de la recherche </h2>
+        <p>
+            {% if criteria['campus'] %}<span style="margin-right: 2rem">Campus: {{ criteria['campus'].name}} </span>{% endif %}
+            {% if criteria['word'] %}<span>Nom contient {{ criteria['word'] }}</span>{% endif %}
+            {% if criteria['startingAfter'] %}<span>Débute après le {{ criteria['startingAfter']|date('d/m/Y') }}</span>{% endif %}
+            {% if criteria['startingBefore'] %}<span>Débute avant le {{ criteria['startingBefore']|date('d/m/Y') }}</span>{% endif %}
+        </p>
+
     <table>
         <thead>
             <tr>
@@ -102,7 +111,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="10">no records found</td>
+                <td colspan="10">Aucune sortie n'a été trouvée !</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -110,8 +119,14 @@
     </div>
 
     <div><a href="{{ path('app_activity_create') }}">Nouvelle sortie</a></div>
+
     <div>
-        <p>Par défaut, les sorties de plus de 30 jours ne sont pas affichées</p>
-        <p>Pour afficher les sorties de plus de 30 jours <a href="{{ path('app_activity_list', {'withArchives':'true'}) }}">cliquer ici</a></p>
+        {% if not criteria['withArchives'] %}
+            <p>Par défaut, les sorties de plus de 30 jours ne sont pas affichées. <br/>
+            Pour afficher toutes les sorties correspondants à la recherche, <a href="{{ path('app_activity_list', {'withArchives':'true'}) }}">cliquer ici</a></p>
+        {% else %}
+            <p>Pour retirer les sorties archivées de la recherche, <a href="{{ path('app_activity_list') }}">cliquer ici</a></p>
+        {% endif %}
     </div>
+
 {% endblock %}

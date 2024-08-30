@@ -29,30 +29,30 @@ class ActivityRepository extends ServiceEntityRepository
             ->join('o.campus', 'c')
             ->addselect('r')
             ->leftJoin('a.registrations', 'r')
-            ->where('a.is_archived = :is_archived and s.name!=:cancelled')
-            ->setParameter(':is_archived', $criteria['is_archived'])
-            ->setParameter(':cancelled', 'cancelled');
+            ->where("s.name!='cancelled'");
+
+        if(!$criteria['withArchives']){
+            $query->andwhere('a.is_archived = 0');
+        }
 
         if($criteria['campus']){
             $query->andWhere('c.id=:campus')
-                ->setParameter(':campus', $criteria['campus']);
+                ->setParameter(':campus', $criteria['campus']->getId());
         }
 
-        if($criteria['words']){
-            $words = $criteria['words'];
-            $likeClause = 'a.name like ';
-            $params = new ArrayCollection();
-            for ($i=0;$i<count($words);$i++){
-                if($i>0){
-                    $likeClause .= ' or ';
-                }
-                $likeClause .= ':word'.$i;
-                $params[] = new Parameter("word".$i,$words[$i]);
-            }
-            var_dump($likeClause);
-            var_dump($params);
-            $query->andWhere($likeClause)
-                ->setParameters($params);
+        if($criteria['word']){
+            $query->andWhere('a.name like :word')
+                ->setParameter(':word','%'.$criteria['word'].'%');
+        }
+
+        if($criteria['startingAfter']){
+            $query->andWhere('a.starting_date > :after')
+                ->setParameter(':after',$criteria['startingAfter']);
+        }
+
+        if($criteria['startingBefore']){
+            $query->andWhere('a.starting_date < :before')
+                ->setParameter(':before',$criteria['startingBefore']);
         }
 
         return $query->getQuery()
