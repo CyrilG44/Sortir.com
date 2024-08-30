@@ -58,6 +58,8 @@ class ActivityController extends AbstractController
     #[Route('/{id}', name: '_detail', methods: ['GET'])]
     public function show(Activity $activity): Response
     {
+
+
         return $this->render('activity/detail.html.twig', [
             'activity' => $activity,
         ]);

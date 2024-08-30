@@ -7,43 +7,90 @@
 
     <table class="table">
         <tbody>
+
             <tr>
-                <th>Id</th>
-                <td>{{ activity.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
+                <th>Nom de la sortie : </th>
                 <td>{{ activity.name }}</td>
             </tr>
             <tr>
-                <th>Starting_date</th>
+                <th>Date et l'heure de la sortie : </th>
                 <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
-                <th>Duration</th>
-                <td>{{ activity.durationHours }}</td>
-            </tr>
-            <tr>
-                <th>Registration_limit_date</th>
+                <th>Date limite d'inscription</th>
                 <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
-                <th>Registration_max_nb</th>
+                <th>Nombre de places : </th>
                 <td>{{ activity.registrationMaxNb }}</td>
             </tr>
             <tr>
-                <th>Description</th>
+                <th>Durée : </th>
+                <td>{{ activity.durationHours }}</td>
+            </tr>
+
+
+            <tr>
+                <th>Description et infos : </th>
                 <td>{{ activity.description }}</td>
             </tr>
+
             <tr>
-                <th>Photo_url</th>
-                <td>{{ activity.photoUrl }}</td>
+                <th>Lieu: </th>
+                <td>{{ activity.place.name }}</td>
             </tr>
+
             <tr>
-                <th>Is_archived</th>
-                <td>{{ activity.isArchived ? 'Yes' : 'No' }}</td>
+                <th>Rue : </th>
+                <td>{{ activity.place.street }}</td>
             </tr>
+
+            <tr>
+                <th>Ville : </th>
+                <td>{{ activity.place.city.name }}</td>
+            </tr>
+
+            <tr>
+                <th>Code postal :</th>
+                <td>{{ activity.place.city.postcode}}</td>
+            </tr>
+
+            <tr>
+                <th>Latitude :</th>
+                <td>{{ activity.place.latitude }}</td>
+            </tr>
+
+            <tr>
+                <th>Longitude :</th>
+                <td>{{ activity.place.longitude }}</td>
+            </tr>
+
         </tbody>
+    </table>
+
+    <h2>Liste des participants inscrits</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Pseudo</th>
+            <th>Nom</th>
+        </tr>
+        </thead>
+        <tbody>
+
+            {% for registration in activity.registrations %}
+                <tr>
+                <td>{{ registration.user.pseudo }} </td>
+                <td>{{ registration.user.firstName }}</td>
+                </tr>
+            {% endfor %}
+
+
+
+
+        </tbody>
+
     </table>
 
     <a href="{{ path('app_activity_list') }}">back to list</a>
