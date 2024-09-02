@@ -11,7 +11,6 @@ use App\Repository\ActivityRepository;
 use App\Repository\RegistrationRepository;
 use App\Repository\StateRepository;
 use App\Repository\UserRepository;
-use Container7dx22SR\getUserRepositoryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

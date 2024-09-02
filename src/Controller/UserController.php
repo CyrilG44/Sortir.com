@@ -70,6 +70,12 @@ class UserController extends AbstractController
 
             /** @var UploadedFile $file */
             $file = $form->get('imageFile')->getData();
+            if($user->getProfileImage()) {
+                /** @var UploadedFile $file */
+                $filename = $user->getProfileImage();
+                $filePath = $this->getParameter('kernel.project_dir') . '/public/profile/images/' . $filename;
+                unlink($filePath);
+            }
             $filename = $file->getClientOriginalName();
             $file->move($this->getParameter('kernel.project_dir') . '/public/profile/images', $filename);
             $user->setProfileImage($filename);
