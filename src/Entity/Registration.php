@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RegistrationRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Registration
 {
 
@@ -27,7 +28,7 @@ class Registration
     {
         return $this->registration_date;
     }
-    #[ORM\PreUpdate]
+    #[ORM\PrePersist]
     public function setRegistrationDate(): static
     {
         $this->registration_date = new \DateTime();

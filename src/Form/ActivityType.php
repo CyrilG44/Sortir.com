@@ -18,18 +18,18 @@ class ActivityType extends AbstractType
     {
         $builder
             ->add('name', null, [
-                'label' => "Nom de la sortie",
+                'label' => "Nom",
                 'required' => true,
             ])
             ->add('starting_date', null, [
                 'widget' => 'single_text',
                 'input' => 'datetime',
                 'invalid_message' => 'Veuillez saisir une date valide',
-                'label' => "Date de la sortie",
+                'label' => "Date",
                 'required' => true,
             ])
             ->add('duration_hours', null,  [
-                'label' => "Durée de la sortie (en heure)",
+                'label' => "Durée (en heure)",
                 'required' => false,
             ])
             ->add('registration_limit_date', null, [
@@ -40,21 +40,21 @@ class ActivityType extends AbstractType
                 'required' => true,
             ])
             ->add('registration_max_nb', null,  [
-                'label' => "Nombre d'inscription maximum",
+                'label' => "Nombre d'inscriptions maximum",
                 'required' => true,
             ])
             ->add('description', null,  [
-                'label' => "Description de la sortie",
+                'label' => "Description",
                 'required' => false,
             ])
             ->add('photo_url', null,  [
-                'label' => "Url de la photo",
+                'label' => "URL de la photo",
                 'required' => false,
             ])
             ->add('place', EntityType::class, [
                 'class' => Place::class,
                 'choice_label' => 'name',
-                'label' => "Lieu de la sortie",
+                'label' => "Lieu",
                 'required' => true,
             ])
         ;

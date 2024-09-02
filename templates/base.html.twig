@@ -13,13 +13,13 @@
     </head>
     <body>
         <header>
-            <img src="{{ asset('/images/sortir.png') }}" alt="logo sortir.com">
+            <img src="{{ asset('/images/sortir.png') }}" alt="logo sortir.com" style="max-height: 100px">
             <nav>
                 <ul>
                     <li><a href="{{ path('app_home') }}">Accueil</a></li>
                     {%  if is_granted('IS_AUTHENTICATED') %}
                         <li><a href="{{ path('app_activity_list') }}">Sorties</a></li>
-                        <li><a href="{{ path('app_user_show') }}">Mon profil</a></li>
+                        <li><a href="{{ path('app_user_show') }}">{{ app.user.pseudo ?? 'Mon profil' }}</a></li>
                         <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
                     {% else %}
                         <li><a href="{{ path('app_login') }}">Se connecter</a></li>

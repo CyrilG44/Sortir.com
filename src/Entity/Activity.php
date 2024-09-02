@@ -78,8 +78,8 @@ class Activity
     #[Assert\Type('bool')]
     private ?bool $is_archived = self::IS_ARCHIVED;
 
-    #[ORM\ManyToOne(inversedBy: 'activities')]
-    #[ORM\JoinColumn(name: 'organizer_id', nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'activities_organizer')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $organizer = null;
 
     #[ORM\ManyToOne(inversedBy: 'activities')]

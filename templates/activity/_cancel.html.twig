@@ -1,4 +1,9 @@
-<h1>cancel</h1>
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} - supprimer sortie{% endblock %}
+
+{% block body %}
+<h1>Supprimer la sortie</h1>
 
 <div>
     <p> Nom de la sortie:</p> <span>{{ activity.name }}</span>
@@ -16,6 +21,6 @@
     <p> Nom de la sortie:</p> <span>{{ activity.name }}</span>
 </div>
 
+{{ include('activity/_form.html.twig', {'button_label': 'Supprimer'}) }}
 
-{{ include('activity/_form.html.twig', {'button_label': 'Update'}) }}
-
+{% endblock %}

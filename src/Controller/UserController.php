@@ -11,17 +11,19 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/user',name: 'app_user')]
 class UserController extends AbstractController
 {
 
-
+/* ====== LISTER LES USERS ========
     #[Route('/', name: '_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
@@ -29,6 +31,7 @@ class UserController extends AbstractController
             'users' => $userRepository->findAll(),
         ]);
     }
+*/
 
     #[Route('/myAccount', name: '_show', methods: ['GET'])]
     public function show(): Response
@@ -41,6 +44,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/myAccount/edit', name: '_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, EntityManagerInterface $entityManager,UserPasswordHasherInterface $userPasswordHasher): Response
     {
         $user = $this->getUser();
@@ -49,6 +53,19 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            /** @var UploadedFile $file */
+            $file = $form->get('imageFile')->getData();
+            if($user->getProfileImage()) {
+                /** @var UploadedFile $file */
+                $filename = $user->getProfileImage();
+                $filePath = $this->getParameter('kernel.project_dir') . '/public/profile/images/' . $filename;
+                unlink($filePath);
+            }
+            $filename = $file->getClientOriginalName();
+            $file->move($this->getParameter('kernel.project_dir') . '/public/profile/images', $filename);
+            $user->setProfileImage($filename);
+
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
@@ -74,6 +91,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/profile/{id}', name: '_profile', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function organizerProfile(User $user): Response
     {
 
