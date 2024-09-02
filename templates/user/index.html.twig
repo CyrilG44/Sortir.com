@@ -11,13 +11,10 @@
                 <th>Id</th>
                 <th>Pseudo</th>
                 <th>Roles</th>
-                <th>Password</th>
-                <th>Last_name</th>
-                <th>First_name</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Is_active</th>
-                <th>actions</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Téléphone</th>
+                <th>Mail</th>
             </tr>
         </thead>
         <tbody>
@@ -33,8 +30,8 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.isActive ? 'Yes' : 'No' }}</td>
                 <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+                    <a href="{{ path('app_user_show', {'id': user.id}) }}">détails</a>
+                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">modifier</a>
                 </td>
             </tr>
         {% else %}

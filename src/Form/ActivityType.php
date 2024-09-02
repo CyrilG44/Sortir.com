@@ -23,15 +23,19 @@ class ActivityType extends AbstractType
             ])
             ->add('starting_date', null, [
                 'widget' => 'single_text',
+                'input' => 'datetime',
+                'invalid_message' => 'Veuillez saisir une date valide',
                 'label' => "Date de la sortie",
                 'required' => true,
             ])
-            ->add('duration', null,  [
+            ->add('duration_hours', null,  [
                 'label' => "Durée de la sortie (en heure)",
                 'required' => false,
             ])
             ->add('registration_limit_date', null, [
                 'widget' => 'single_text',
+                'input' => 'datetime',
+                'invalid_message' => 'Veuillez saisir une date valide',
                 'label' => "Date limite d'inscription",
                 'required' => true,
             ])
@@ -47,12 +51,6 @@ class ActivityType extends AbstractType
                 'label' => "Url de la photo",
                 'required' => false,
             ])
-            ->add('organizer', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'pseudo',
-                'label' => "Organisateur",
-                'required' => true,
-            ])
             ->add('place', EntityType::class, [
                 'class' => Place::class,
                 'choice_label' => 'name',
@@ -61,6 +59,8 @@ class ActivityType extends AbstractType
             ])
         ;
     }
+
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {

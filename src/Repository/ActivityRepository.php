@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Activity;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr\Join;
@@ -18,6 +19,19 @@ class ActivityRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Activity::class);
     }
+
+    public function countParticipant(int $id) {
+        return $this->createQueryBuilder('a')
+            ->select('count(u) as nb' )
+            ->leftjoin('a.registrations', 'r')
+            ->leftJoin('r.user', 'u')
+            ->where('a.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
 
     public function findByCriteria(array $criteria): array {
         $query = $this->createQueryBuilder('a')

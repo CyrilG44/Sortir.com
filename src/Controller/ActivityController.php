@@ -3,10 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Activity;
+use App\Entity\Registration;
+use App\Entity\User;
 use App\Form\ActivityType;
+use App\Form\CancelActivityType;
 use App\Repository\ActivityRepository;
+use App\Repository\RegistrationRepository;
 use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,6 +88,7 @@ class ActivityController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $activity = new Activity();
+        $activity->setOrganizer($this->getUser());
         $form = $this->createForm(ActivityType::class, $activity);
         $form->handleRequest($request);
 
@@ -107,7 +113,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: '_update', methods: ['GET', 'POST'])]
+    #[Route('/update/{id}', name: '_update', methods: ['GET', 'POST'])]
     public function edit(Request $request, Activity $activity, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ActivityType::class, $activity);
@@ -116,7 +122,9 @@ class ActivityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('Sortie Modifié avec succès !', 'Une sortie a été mise à jour !');
+
+            return $this->redirectToRoute('app_activity_list');
         }
 
         return $this->render('activity/update.html.twig', [
@@ -139,11 +147,146 @@ class ActivityController extends AbstractController
     #[Route('/{id}/cancel', name: '_cancel', methods: ['GET', 'POST'])]
     public function cancel(Request $request, Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
     {
-        $state = $stateRepository->findOneBy(['name' => 'cancelled']);
-        $activity->setState($state);
-        $entityManager->flush();
+        if($activity->getState()->getId() == 1 || $activity->getState()->getId() == 2 || $activity->getState()->getId() == 3){
 
 
-        return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        $form = $this->createForm(CancelActivityType::class,$activity);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() ) {
+            $state = $stateRepository->findOneBy(['name' => 'cancelled']);
+            $activity->setState($state);
+            $entityManager->flush();
+            $this->addFlash('success', "Success L'activité a bien été cancel" );
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('activity/_cancel.html.twig', [
+            'activity' => $activity,
+            'form' => $form,
+        ]);
+        }else {
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
     }
+
+    #[Route('/signUp/{id}', name: '_signup', methods: ['GET'])]
+    public function signUp(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar, StateRepository $sr): Response
+    {
+
+        if($this->isCsrfTokenValid('signup'.$activity->getId(), $request->query->get('token'))) {
+
+            //controle statut activité
+            if($activity->getState()->getName() !== 'open'){
+                $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. L\'activité n\'est pas ouverte !');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+
+            //controle date limite d'inscription
+            $date = new \DateTime();
+            if($activity->getRegistrationLimitDate() < $date){
+                $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Date d\'inscription dépassée !');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+
+            //controle nombre max participants
+            $nbParticipants = $ar->countParticipant($activity->getId());
+
+            if($nbParticipants['nb'] >= $activity->getRegistrationMaxNb()){
+                $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Plus de place disponible !');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+
+            $user = $this->getUser();
+
+            $registration = new Registration();
+            $registration->setActivity($activity);
+            $registration->setUser($user);
+            $registration->setRegistrationDate();
+
+            //on controle si l'user est déjà inscrit
+            $registrationDB = $registrationRepository->findOneBy([
+                'activity' => $activity,
+                'user' => $user
+            ]);
+            //pas inscrit
+            if($registrationDB === null){
+
+                //on l'inscrit
+                $entityManager->persist($registration);
+                $entityManager->flush();
+
+                $this->addFlash('success', message: 'Vous êtes enregistré(e) sur l\'activité suivante : ' . $activity->getName() . '.');
+
+                //controle -> si max participants atteint on change le status
+                $nbParticipants = $ar->countParticipant($activity->getId());
+                if($nbParticipants['nb'] >= $activity->getRegistrationMaxNb()){
+                    $state = $sr->findOneBy(['name' => 'full']);
+                    $activity->setState($state);
+                    $entityManager->flush();
+                }
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+            //déjà inscrit -> message d'erreur
+            else{
+                $this->addFlash('error', message: 'Vous êtes déjà enregistré(e) sur l\'activité suivante : '.$activity->getName().'.');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+        //tentative frauduleuse de magouillage -> message d'erreur
+        else{
+            $this->addFlash('error', message: 'Action illégale, vos papiers s\'il vous plaît !');
+
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    #[Route('/unsubscribe/{id}', name: '_unsubscribe', methods: ['GET'])]
+    public function unsubscribe(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar, StateRepository $sr): Response
+    {
+
+        if ($this->isCsrfTokenValid('unsubscribe' . $activity->getId(), $request->query->get('token'))) {
+            $user = $this->getUser();
+
+            $registrationDB = $registrationRepository->findOneBy([
+                'activity' => $activity,
+                'user' => $user
+            ]);
+
+            if($registrationDB === null){
+                $this->addFlash('error', message: 'Désinscription impossible ! Vous n\'êtes pas inscrit(e) sur l\'activité suivante : '.$activity->getName().'.');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+
+            }
+            else {
+                $entityManager->remove($registrationDB);
+                $entityManager->flush();
+
+                //controle -> si nb participants < max participants
+                $nbParticipants = $ar->countParticipant($activity->getId());
+                if($nbParticipants['nb'] < $activity->getRegistrationMaxNb()){
+                    $state = $sr->findOneBy(['name' => 'open']);
+                    $activity->setState($state);
+                    $entityManager->flush();
+                }
+
+                $this->addFlash('success', message: 'Vous êtes désinscrit sur l\'activité suivante : ' . $activity->getName() . '.');
+
+                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+        else{
+            $this->addFlash('error', message: 'Action illégale !');
+
+            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        }
+    }
+
+
 }

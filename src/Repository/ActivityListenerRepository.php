@@ -2,41 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Activity;
-use App\Entity\Registration;
+use App\EntityListener\ActivityListener;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Registration>
+ * @extends ServiceEntityRepository<ActivityListener>
  */
-class RegistrationRepository extends ServiceEntityRepository
+class ActivityListenerRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Registration::class);
+        parent::__construct($registry, ActivityListener::class);
     }
 
-
     //    /**
-    //     * @return Registration[] Returns an array of Registration objects
+    //     * @return ActivityListener[] Returns an array of ActivityListener objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
+    //        return $this->createQueryBuilder('a')
+    //            ->andWhere('a.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
+    //            ->orderBy('a.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Registration
+    //    public function findOneBySomeField($value): ?ActivityListener
     //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
+    //        return $this->createQueryBuilder('a')
+    //            ->andWhere('a.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()
