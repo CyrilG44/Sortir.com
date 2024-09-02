@@ -4,12 +4,13 @@ namespace App\Form;
 
 
 use App\Entity\Campus;
-use App\Entity\Serie;
+use App\Entity\State;
 use App\Entity\User;
 use App\Repository\CampusRepository;
-use App\Repository\SerieRepository;
+use App\Repository\StateRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -64,12 +65,12 @@ class UserType extends AbstractType
                             'max' => 4096,
                         ]),
                         new PasswordStrength(),
-                        new NotCompromisedPassword(),
+
                     ],
-                    'label' => 'Nouveau mot de passe',
+                    'label' => 'Mot de passe',
                 ],
                 'second_options' => [
-                    'label' => 'comfirmer mot de passe',
+                    'label' => 'Comfirmation',
                 ],
                 'invalid_message' => 'The password fields must match.',
                 // Instead of being set onto the object directly,
@@ -84,10 +85,6 @@ class UserType extends AbstractType
                     return $campusRepository->createQueryBuilder('s')->orderBy('s.name', 'ASC');
                 }
             ])
-
-
-
-
         ;
     }
 
