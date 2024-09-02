@@ -29,3 +29,4 @@
 
 #ignorer le contenu du dossier migrations (pour le moment ?)
 /migrations
+/public/profile
