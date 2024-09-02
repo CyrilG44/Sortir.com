@@ -139,7 +139,7 @@ class ActivityController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/cancel', name: '_cancel', methods: ['GET', 'POST'])]
+    #[Route('/cancel/{id}', name: '_cancel', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function cancel(Request $request, Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
     {
@@ -252,4 +252,30 @@ class ActivityController extends AbstractController
         return $this->redirectToRoute('app_activity_list', []);
     }
 
+    #[Route('/publish/{id}', name: '_publish')]
+    #[IsGranted('ROLE_USER')]
+    public function publish(Activity $activity, EntityManagerInterface $em, StateRepository $stateRepository): Response {
+        //if not organizer
+        if($activity->getOrganizer()->getId()!=$this->getUser()->getId()){
+            $this->addFlash('error', message: 'Publication impossible ! Seul l\'oganisateur peut publier une activité !');
+            return $this->redirectToRoute('app_activity_list', []);
+        }
+
+        //if not draft state
+        if($activity->getState()->getName()!='draft'){
+            $this->addFlash('error', message: 'Publication impossible ! Seule une activité non publiée peut être publiée !');
+            return $this->redirectToRoute('app_activity_list', []);
+        }
+
+        //if registration limit date in past
+        if($activity->getRegistrationLimitDate() <= new \DateTime()){
+            $this->addFlash('error', message: 'Publication impossible ! La date de fin d\'inscription est passée !');
+            return $this->redirectToRoute('app_activity_list', []);
+        }
+
+        $activity->setState($stateRepository->findOneBy(['name'=>'open']));
+        $em->flush();
+        $this->addFlash('success', message: 'L\'activité a été publiée avec succès');
+        return $this->redirectToRoute('app_activity_list', []);
+    }
 }
