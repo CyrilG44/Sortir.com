@@ -25,8 +25,13 @@
                 <td>{{ activity.registrationMaxNb }}</td>
             </tr>
             <tr>
-                <th>Durée : </th>
-                <td>{{ activity.durationHours }}</td>
+                <th>Durée [heures] : </th>
+                <td>{%  if activity.durationHours %}
+                        {{ activity.durationHours }}
+                    {% else %}
+                        <i>Non renseignée</i>
+                    {% endif %}
+                </td>
             </tr>
 
 
@@ -73,6 +78,7 @@
     <table>
         <thead>
         <tr>
+            <th></th>
             <th>Pseudo</th>
             <th>Nom</th>
         </tr>
@@ -81,8 +87,13 @@
 
             {% for registration in activity.registrations %}
                 <tr>
-                <td>{{ registration.user.pseudo }} </td>
-                <td>{{ registration.user.firstName }}</td>
+                    <td><a href="{{ path('app_user_profile', {'id': registration.user.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a></td>
+                    <td>{{ registration.user.pseudo }} </td>
+                    <td>{{ registration.user.firstName }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="10">Aucune participant pour le moment !</td>
                 </tr>
             {% endfor %}
 
@@ -93,9 +104,11 @@
 
     </table>
 
-    <a href="{{ path('app_activity_list') }}">back to list</a>
+    <a href="{{ path('app_activity_list') }}">Retour à la liste</a>
 
-    <a href="{{ path('app_activity_update', {'id': activity.id}) }}">edit</a>
-
+    {%  if activity.organizer.id == app.user.id %}
+    <a href="{{ path('app_activity_update', {'id': activity.id}) }}">Modifier</a>
     {{ include('activity/_delete_form.html.twig') }}
+    {% endif %}
+
 {% endblock %}

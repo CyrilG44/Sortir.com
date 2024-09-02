@@ -118,9 +118,9 @@
                     {%  if activity.organizer.id == app.user.id and activity.state.name != "done" and activity.state.name != "cancelled" %}
                         <a href="{{ path('app_activity_update', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier"></a>
                         {%  if activity.state.name == "draft" %}
-                            <a href=""><img style="max-height: 30px" src="{{ asset('images/icone-publier.webp') }}" alt="Publier"></a>
+                            <a href=""><img style="max-height: 30px" src="{{ asset('images/icone-publier.webp') }}" onclick="return confirm('Merci de confirmer la publication de la sortie en cliquant sur OK')" alt="Publier"></a>
                             {% endif %}
-                        <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-annuler.jpg') }}" onclick="return confirm("Merci de confirmer l'annulation de la sortie en cliquant sur OK")" alt="Annuler"></a>
+                        <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-annuler.jpg') }}" alt="Annuler"></a>
                     {% endif %}
                 </td>
             </tr>
