@@ -3,8 +3,7 @@
 {% block title %}{{parent()}} - Liste des sorties{% endblock %}
 
 {% block body %}
-    <h1>Liste des sorties</h1>
-
+    <h1>Sorties</h1>
     {% for type in ['success', 'error'] %}
         {% for message in app.flashes(type) %}
             <div class="alert alert-{{ type == 'error' ? 'danger' : type }}">
@@ -12,86 +11,137 @@
             </div>
         {% endfor %}
     {% endfor %}
-    <table class="table">
+    <div>
+        <form action="{{ criteria['withArchives'] ? path('app_activity_list', {'withArchives':'true'}):path('app_activity_list') }}" method="POST">
+            <div>
+                <div>
+                    <label for="campus">Site</label>
+                    <select name="campus" id="campus">
+                        <option value="-1"></option>
+                        {% for campus in campusList %}
+                            <option value="{{ campus.id }}">{{ campus.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="word">Mot-clé(s)</label>
+                    <input id="word" type="text" name="word" placeholder="Rechercher par mot-clé"/>
+                </div>
+                <div>
+                    Entre <input type="date" name="startingAfter"/> et <input type="date" name="startingBefore">
+                </div>
+            </div>
+            <div>
+                <div>
+                    <input type="checkbox" id="organizer" name="organizer">
+                    <label for="organizer">organisateur</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="registered" name="registered">
+                    <label for="registered">participant</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="forthcoming" name="forthcoming">
+                    <label for="forthcoming">à venir</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="ongoing" name="ongoing">
+                    <label for="ongoing">en cours</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="done" name="done">
+                    <label for="done">terminé</label>
+                </div>
+            </div>
+            <div>
+                <button type="reset">Effacer</button>
+                <button type="submit">Rechercher</button>
+            </div>
+
+        </form>
+    </div>
+
+    <div>
+        <h2>Résultat(s) de la recherche</h2>
+        <p>
+            {% if criteria['campus'] %}<span style="margin-right: 2rem">Campus: {{ criteria['campus'].name}} </span>{% endif %}
+            {% if criteria['word'] %}<span>Nom contient: {{ criteria['word'] }}</span>{% endif %}
+            {% if criteria['startingAfter'] %}<span>Débute après le: {{ criteria['startingAfter']|date('d/m/Y') }}</span>{% endif %}
+            {% if criteria['startingBefore'] %}<span>Débute avant le: {{ criteria['startingBefore']|date('d/m/Y') }}</span>{% endif %}
+            {% if criteria['organizer'] %}<span>Organisateur</span>{% endif %}
+            {% if criteria['registered'] %}<span>Participant</span>{% endif %}
+            {% if criteria['forthcoming'] %}<span>A venir</span>{% endif %}
+            {% if criteria['ongoing'] %}<span>En cours</span>{% endif %}
+            {% if criteria['done'] %}<span>Terminé</span>{% endif %}
+        </p>
+
+    <table>
         <thead>
             <tr>
-                <th>Nom de la sortie</th>
-                <th>Date de début de la sortie</th>
-                <th>Durée de la sortie en heure</th>
-                <th>Date limite d'inscription à la sortie</th>
-                <th>Nombre d'inscription maximum à la sortie</th>
-                <th>Description de la sortie</th>
+                <th></th>
+                <th>Site</th>
+                <th>Nom</th>
+                <th>Début</th>
+                <th>Inscription jusqu'au</th>
+                <th>Inscrits/places</th>
+                <th>Etat</th>
+                <th>S'inscrire/Se désister</th>
                 <th>Organisateur</th>
-                <th>actions</th>
+                <th>Gérer</th>
             </tr>
         </thead>
         <tbody>
         {% for activity in activities %}
+            {% set isRegistered = activity.registrations|filter(r=> r.user.id == app.user.id)|length == 1 %}
             <tr>
+                <td><a href="{{ path('app_activity_detail', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a></td>
+                <td>{{ activity.organizer.campus.name }}</td>
                 <td>{{ activity.name }}</td>
-                <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ activity.durationHours }}</td>
-                <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ activity.registrationMaxNb }}</td>
-                <td>{{ activity.description }}</td>
-                <td>{{ activity.organizer.pseudo }}</td>
-
-
-                {% if
-                    activity.registrationLimitDate > date and
-                    activity.state.name == 'open' and
-                    activity.registrations.count < activity.registrationMaxNb
-                %}
-                    <td>
-                        <a
-                            class="btn btn-primary" href="{{ path('app_activity_signup', {'id' : activity.id, 'token':csrf_token('signup'~activity.id)}) }}"
-                            onclick="return confirm('Merci de confirmer votre inscription en cliquant sur OK')">S'inscrire
+                <td>{{ activity.startingDate ? activity.startingDate|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ activity.registrations|length ~ '/' ~ activity.registrationMaxNb }}</td>
+                <td>{{ activity.state.nameFr }}</td>
+                <td>
+                    {%  if not isRegistered and activity.state.name=="open" %}
+                        <a href="{{ path('app_activity_signup', {'id' : activity.id, 'token':csrf_token('signup'~activity.id)}) }}" onclick="return confirm('Merci de confirmer votre inscription en cliquant sur OK')">
+                            <img style="max-height: 30px" src="{{ asset('images/icone-s\'inscrire.png') }}" alt="S'inscrire">
                         </a>
-                    </td>
-                {% endif %}
-
-
-                <td>
-                    <a
-                        class="btn btn-danger" href="{{ path('app_activity_unsubscribe', {'id': activity.id, 'token':csrf_token('unsubscribe'~activity.id) }) }}"
-                        onclick="return confirm('Merci de confirmer votre désinscription en cliquant sur OK')">Se désister</a>
+                    {%  endif %}
+                    {% if isRegistered and (activity.state.name=="open" or activity.state.name=="full") %}
+                        <a href="{{ path('app_activity_unsubscribe', {'id': activity.id, 'token':csrf_token('unsubscribe'~activity.id) }) }}">
+                            <img style="max-height: 30px" src="{{ asset('images/icone-se-desister.jpg') }}" onclick="return confirm('Merci de confirmer votre désinscription en cliquant sur OK')" alt="Se désister">
+                        </a>
+                    {%  endif %}
                 </td>
+                <td><a href="">{{ activity.organizer.pseudo }}</a></td>
                 <td>
-                <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">cancel</a>
+                    {%  if activity.organizer.id == app.user.id and activity.state.name != "done" and activity.state.name != "cancelled" %}
+                        <a href="{{ path('app_activity_update', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier"></a>
+                        {%  if activity.state.name == "draft" %}
+                            <a href=""><img style="max-height: 30px" src="{{ asset('images/icone-publier.webp') }}" onclick="return confirm('Merci de confirmer la publication de la sortie en cliquant sur OK')" alt="Publier"></a>
+                            {% endif %}
+                        <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-annuler.jpg') }}" alt="Annuler"></a>
+                    {% endif %}
                 </td>
-                <td>
-                    <a href="{{ path('app_activity_detail', {'id': activity.id}) }}">détail</a>
-                </td>
-
-
-                <!--
-
-                <td></td>
-                <td>
-
-                    <a href="{{ path('app_activity_update', {'id': activity.id}) }}">Update</a>
-
-                    <a href="">S'inscrire</a>
-                    <a href="">Se désinscrire</a>
-                </td>
-            -->
             </tr>
         {% else %}
             <tr>
-                <td colspan="10">no records found</td>
+                <td colspan="10">Aucune sortie n'a été trouvée !</td>
             </tr>
         {% endfor %}
-
-        {% for type in ['success', 'error'] %}
-            {% for message in app.flashes(type) %}
-                <div class="alert alert-{{ type == 'error' ? 'danger' : type }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
-
         </tbody>
     </table>
+    </div>
 
-    <a href="{{ path('app_activity_create') }}">Create new</a>
+    <div><a href="{{ path('app_activity_create') }}">Nouvelle sortie</a></div>
+
+    <div>
+        {% if not criteria['withArchives'] %}
+            <p>Par défaut, les sorties de plus de 30 jours ne sont pas affichées. <br/>
+            Pour afficher toutes les sorties correspondants à la recherche, <a href="{{ path('app_activity_list', {'withArchives':'true'}) }}">cliquer ici</a></p>
+        {% else %}
+            <p>Pour retirer les sorties archivées de la recherche, <a href="{{ path('app_activity_list') }}">cliquer ici</a></p>
+        {% endif %}
+    </div>
+
 {% endblock %}
