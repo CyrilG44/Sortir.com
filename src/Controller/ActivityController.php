@@ -4,14 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Activity;
 use App\Entity\Registration;
-use App\Entity\User;
 use App\Form\ActivityType;
 use App\Form\CancelActivityType;
 use App\Repository\ActivityRepository;
 use App\Repository\RegistrationRepository;
 use App\Repository\CampusRepository;
 use App\Repository\StateRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -96,7 +94,7 @@ class ActivityController extends AbstractController
             $entityManager->persist($activity);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_activity_list', []);
         }
 
         return $this->render('activity/create.html.twig', [
@@ -141,7 +139,7 @@ class ActivityController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_activity_list', []);
     }
 
     #[Route('/{id}/cancel', name: '_cancel', methods: ['GET', 'POST'])]
@@ -158,7 +156,7 @@ class ActivityController extends AbstractController
             $activity->setState($state);
             $entityManager->flush();
             $this->addFlash('success', "Success L'activité a bien été cancel" );
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_activity_list', []);
         }
 
         return $this->render('activity/_cancel.html.twig', [
@@ -166,7 +164,7 @@ class ActivityController extends AbstractController
             'form' => $form,
         ]);
         }else {
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_activity_list', []);
         }
     }
 
@@ -180,7 +178,7 @@ class ActivityController extends AbstractController
             if($activity->getState()->getName() !== 'open'){
                 $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. L\'activité n\'est pas ouverte !');
 
-                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_activity_list', []);
             }
 
             //controle date limite d'inscription
@@ -188,7 +186,7 @@ class ActivityController extends AbstractController
             if($activity->getRegistrationLimitDate() < $date){
                 $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Date d\'inscription dépassée !');
 
-                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_activity_list', []);
             }
 
             //controle nombre max participants
@@ -197,7 +195,7 @@ class ActivityController extends AbstractController
             if($nbParticipants['nb'] >= $activity->getRegistrationMaxNb()){
                 $this->addFlash('error', message: 'Inscription impossible sur l\'activité suivante : ' . $activity->getName() . '. Plus de place disponible !');
 
-                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_activity_list', []);
             }
 
             $user = $this->getUser();
@@ -229,20 +227,20 @@ class ActivityController extends AbstractController
                     $entityManager->flush();
                 }
 
-                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_activity_list', []);
             }
             //déjà inscrit -> message d'erreur
             else{
                 $this->addFlash('error', message: 'Vous êtes déjà enregistré(e) sur l\'activité suivante : '.$activity->getName().'.');
 
-                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_activity_list', []);
             }
         }
         //tentative frauduleuse de magouillage -> message d'erreur
         else{
             $this->addFlash('error', message: 'Action illégale, vos papiers s\'il vous plaît !');
 
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_activity_list', []);
         }
     }
 
@@ -261,7 +259,7 @@ class ActivityController extends AbstractController
             if($registrationDB === null){
                 $this->addFlash('error', message: 'Désinscription impossible ! Vous n\'êtes pas inscrit(e) sur l\'activité suivante : '.$activity->getName().'.');
 
-                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_activity_list', []);
 
             }
             else {
@@ -278,15 +276,14 @@ class ActivityController extends AbstractController
 
                 $this->addFlash('success', message: 'Vous êtes désinscrit sur l\'activité suivante : ' . $activity->getName() . '.');
 
-                return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_activity_list', []);
             }
         }
         else{
             $this->addFlash('error', message: 'Action illégale !');
 
-            return $this->redirectToRoute('app_activity_list', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_activity_list', []);
         }
     }
-
 
 }
