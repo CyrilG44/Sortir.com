@@ -5,9 +5,15 @@
 {% block body %}
     <h1>Utilisateur</h1>
 
-    <p>
-        <img src="/profile/images/{{ user.profileImage }}" alt="profile image">
-    </p>
+    {% if user.getProfileImage() == 'defaultProfilePicture.jpg' %}
+        <p>
+            <img src="{{ asset('images/defaultProfilePicture.jpg') }}" alt="default profile picture">
+        </p>
+    {% else %}
+        <p>
+            <img src="/profile/images/{{ user.profileImage }}" alt="profile picture">
+        </p>
+    {% endif %}
 
     <table class="table">
         <tbody>
