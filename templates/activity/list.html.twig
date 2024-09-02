@@ -56,12 +56,17 @@
     </div>
 
     <div>
-        <h2>Résultat(s) de la recherche </h2>
+        <h2>Résultat(s) de la recherche</h2>
         <p>
             {% if criteria['campus'] %}<span style="margin-right: 2rem">Campus: {{ criteria['campus'].name}} </span>{% endif %}
-            {% if criteria['word'] %}<span>Nom contient {{ criteria['word'] }}</span>{% endif %}
-            {% if criteria['startingAfter'] %}<span>Débute après le {{ criteria['startingAfter']|date('d/m/Y') }}</span>{% endif %}
-            {% if criteria['startingBefore'] %}<span>Débute avant le {{ criteria['startingBefore']|date('d/m/Y') }}</span>{% endif %}
+            {% if criteria['word'] %}<span>Nom contient: {{ criteria['word'] }}</span>{% endif %}
+            {% if criteria['startingAfter'] %}<span>Débute après le: {{ criteria['startingAfter']|date('d/m/Y') }}</span>{% endif %}
+            {% if criteria['startingBefore'] %}<span>Débute avant le: {{ criteria['startingBefore']|date('d/m/Y') }}</span>{% endif %}
+            {% if criteria['organizer'] %}<span>Organisateur</span>{% endif %}
+            {% if criteria['registered'] %}<span>Participant</span>{% endif %}
+            {% if criteria['forthcoming'] %}<span>A venir</span>{% endif %}
+            {% if criteria['ongoing'] %}<span>En cours</span>{% endif %}
+            {% if criteria['done'] %}<span>Terminé</span>{% endif %}
         </p>
 
     <table>
