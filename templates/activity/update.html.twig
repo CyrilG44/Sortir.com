@@ -5,9 +5,8 @@
 {% block body %}
     <h1>Modifier l'activité</h1>
 
-    {{ include('activity/_form.html.twig', {'button_label': 'Modifier'}) }}
+    {{ include('activity/_form.html.twig', {'button_label': 'Enregistrer'}) }}
 
     <a href="{{ path('app_activity_list') }}">Retour à la liste</a>
-
-    {{ include('activity/_delete_form.html.twig') }}
+    <a href="{{ path('app_activity_cancel',{'id':activity.id}) }}">Supprimer</a>
 {% endblock %}

@@ -11,12 +11,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/user',name: 'app_user')]
 class UserController extends AbstractController
 {
 
-
+/* ====== LISTER LES USERS ========
     #[Route('/', name: '_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
@@ -24,7 +25,7 @@ class UserController extends AbstractController
             'users' => $userRepository->findAll(),
         ]);
     }
-
+*/
 //    =================== CREATE NEW USER ===================
 
 //    #[Route('/new', name: '_new', methods: ['GET', 'POST'])]
@@ -48,6 +49,7 @@ class UserController extends AbstractController
 //    }
 
     #[Route('/myAccount', name: '_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(): Response
     {
         $user = $this->getUser();
@@ -58,6 +60,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/myAccount/edit', name: '_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
@@ -78,6 +81,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/profile/{id}', name: '_profile', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function organizerProfile(User $user): Response
     {
 
