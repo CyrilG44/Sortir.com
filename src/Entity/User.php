@@ -52,7 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
-    private ?bool $is_active = null;
+    private ?bool $is_active = true;
 
     /**
      * @var Collection<int, Activity>
@@ -72,6 +72,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profileImage = null;
+
+    #[ORM\Column]
+    private bool $isVerified = false;
 
     public function __construct()
     {
@@ -294,6 +297,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfileImage(?string $profileImage): static
     {
         $this->profileImage = $profileImage;
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
