@@ -16,11 +16,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class CampusController extends AbstractController
 {
-    #[Route('/', name: '_list', methods: ['GET'])]
-    public function index(CampusRepository $campusRepository): Response
+    #[Route('/', name: '_index', methods: ['GET','POST'])]
+    public function index(CampusRepository $campusRepository, Request $request): Response
     {
+        $criteria = $request->getPayload()->all(); //filled only in case of POST
+        $word = array_key_exists('word',$criteria) ? $criteria['word']:null;
+        if($word){
+            return $this->render('campus/index.html.twig', [
+                'campuses' => $campusRepository->findLike($word),
+                'word' => $word
+            ]);
+        }
+
         return $this->render('campus/index.html.twig', [
             'campuses' => $campusRepository->findAll(),
+            'word' => $word
         ]);
     }
 

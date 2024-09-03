@@ -4,7 +4,18 @@
 
 {% block body %}
     <h1>Sites</h1>
+    <form action="{{ path('app_campus_index') }}" method="POST">
+        <div>
+            <label for="word">Le nom contient </label>
+            <input id="word" name="word" type="text">
+        </div>
+        <button type="submit">Rechercher</button>
+    </form>
+    <div>
+        <h2>Résultat(s) de la recherche</h2>
+        {% if word %}<p>Nom contient: {{ word }}</p>{% endif %}
 
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -24,7 +35,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="3">no records found</td>
+                <td colspan="3">Aucun site trouvé !</td>
             </tr>
         {% endfor %}
         </tbody>
