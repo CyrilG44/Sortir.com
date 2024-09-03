@@ -23,15 +23,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserController extends AbstractController
 {
 
-/* ====== LISTER LES USERS ========
-    #[Route('/', name: '_index', methods: ['GET'])]
+
+    #[Route('/admin', name: '_index', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function index(UserRepository $userRepository): Response
     {
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
         ]);
     }
-*/
 
     #[Route('/myAccount', name: '_show', methods: ['GET'])]
     public function show(): Response
