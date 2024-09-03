@@ -4,10 +4,10 @@
 
 {% block body %}
     {%  if is_granted('ROLE_ADMIN') %}
-    <h1>User index</h1>
+        <h1>User index</h1>
 
-    <table class="table">
-        <thead>
+        <table class="table">
+            <thead>
             <tr>
                 <th>Id</th>
                 <th>Pseudo</th>
@@ -19,38 +19,36 @@
                 <th>Actif</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.pseudo }}</td>
-                <td>
-                {% for role in user.roles %}
-                    {{ role[5:] }} <br>
-                {% endfor %}
-                </td>
-                <td>{{ user.lastName }}</td>
-                <td>{{ user.firstName }}</td>
-                <td>{{ user.phone }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.isActive ? 'Oui' : 'Non' }}</td>
-                <td>
-                    <button><a href="{{ path('app_user_show', {'id': user.id}) }}">détails</a></button>
-                    <button><a href="{{ path('app_user_edit', {'id': user.id}) }}">modifier</a></button>
-                    <button><a href="{{ path('app_user_disable', {'id': user.id, 'token': csrf_token('disable'~user.id)}) }}" onclick="return confirm('Voulez-vous vraiment le désactiver/activer ?')">Activer/Désactiver</a></button>
-                    <button><a href="{{ path('app_user_delete', {'id': user.id, 'token': csrf_token('delete'~user.id)}) }}" onclick="return confirm('Voulez-vous vraiment le supprimer ?')">Supprimer</a></button>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="10">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.pseudo }}</td>
+                    <td>
+                        {% for role in user.roles %}
+                            {{ role[5:] }} <br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ user.lastName }}</td>
+                    <td>{{ user.firstName }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.isActive ? 'Oui' : 'Non' }}</td>
+                    <td>
+                        <button><a href="{{ path('app_user_show', {'id': user.id}) }}">détails</a></button>
+                        <button><a href="{{ path('app_user_edit', {'id': user.id}) }}">modifier</a></button>
+                        <button><a href="{{ path('app_user_disable', {'id': user.id, 'token': csrf_token('disable'~user.id)}) }}" onclick="return confirm('Voulez-vous vraiment le désactiver/activer ?')">Activer/Désactiver</a></button>
+                        <button><a href="{{ path('app_user_delete', {'id': user.id, 'token': csrf_token('delete'~user.id)}) }}" onclick="return confirm('Voulez-vous vraiment le supprimer ?')">Supprimer</a></button>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="10">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
     {% endif %}
 {% endblock %}
-
-
