@@ -5,9 +5,9 @@
 {% block body %}
     <h1>Modifier l'activité</h1>
 
-    {{ include('activity/_form.html.twig', {'button_label': 'Modifier'}) }}
+    {{ include('activity/_form.html.twig', {'button_label': 'Enregistrer'}) }}
 
     <a href="{{ path('app_activity_list') }}">Retour à la liste</a>
-
-    {{ include('activity/_delete_form.html.twig') }}
+    {% if activity.state.name=='draft' %}<a href="{{ path('app_activity_publish',{'id':activity.id}) }}">Publier</a>{% endif %}
+    {% if activity.state.name !='done' %}<a href="{{ path('app_activity_cancel',{'id':activity.id}) }}">Supprimer</a>{% endif %}
 {% endblock %}
