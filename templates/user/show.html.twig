@@ -5,13 +5,13 @@
 {% block body %}
     <h1>Utilisateur</h1>
 
-    {% if user.getProfileImage() == 'defaultProfilePicture.jpg' %}
+    {% if user.getProfileImage() %}
         <p>
-            <img src="{{ asset('images/defaultProfilePicture.jpg') }}" alt="default profile picture">
+            <img src="/profile/images/{{ user.profileImage }}" alt="profile picture">
         </p>
     {% else %}
         <p>
-            <img src="/profile/images/{{ user.profileImage }}" alt="profile picture">
+            <img src="{{ asset('images/defaultProfilePicture.jpg') }}" alt="default profile picture">
         </p>
     {% endif %}
 
