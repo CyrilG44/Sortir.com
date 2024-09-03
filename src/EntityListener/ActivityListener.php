@@ -27,33 +27,81 @@ class ActivityListener
 
     public function postLoad(Activity $activity, LifecycleEventArgs $event):void
     {
-        $this->update($activity);
+        if($this->hasToBeArchived($activity)){
+            $activity->setArchived(true);
+            $this->em->flush(); //pas besoin de persist pour le cas update
+        }
+
+        if($this->hasToBePending($activity)){
+            $activity->setState($this->stateRepository->findOneBy(['name' => "pending"]));
+            $this->em->flush();
+        }
+
+        if($this->hasToBeOngoing($activity)){
+            $activity->setState($this->stateRepository->findOneBy(['name' => "ongoing"]));
+            $this->em->flush();
+        }
+
+        if($this->hasToBeDone($activity)){
+            $activity->setState($this->stateRepository->findOneBy(['name' => "done"]));
+            $this->em->flush();
+        }
     }
 
-    public function update(Activity $activity): void
+    public function hasToBeArchived(Activity $activity): bool
     {
-        if($activity->getDurationHours()){
-            $durationHours = $activity->getDurationHours();
-        }else{
-            $durationHours = 0;
+        if($activity->isArchived()){
+            return false;
         }
 
         $startingDate = clone $activity->getStartingDate();
-        $date = new \DateTime();
-        $startingDate->modify('+'.$durationHours.'hour');
+        $durationHours = $activity->getDurationHours() ? $activity->getDurationHours():0;
+        $endingDate = $startingDate->modify('+'.$durationHours.'hour');
 
-        if($startingDate < $date->modify('-30 day')&& $activity->isArchived() == false ){
-
-            $activity->setArchived(true);
-               $this->em->persist($activity);
-               $this->em->flush();
-
-
-
-
+        if($endingDate->modify('+30 day') < new \DateTime()){
+            return true;
         }
+        return false;
     }
 
+    public function hasToBePending(Activity $activity): bool
+    {
+        if($activity->getState()->getName()!='open' & $activity->getState()->getName()!='full'){
+            return false;
+        }
 
+        if($activity->getRegistrationLimitDate() < new \DateTime()){
+            return true;
+        }
+        return false;
+    }
+
+    public function hasToBeOngoing(Activity $activity): bool
+    {
+        if($activity->getState()->getName()!='pending' & $activity->getState()->getName()!='open' & $activity->getState()->getName()!='full'){
+            return false;
+        }
+
+        if($activity->getStartingDate() < new \DateTime()){
+            return true;
+        }
+        return false;
+    }
+
+    public function hasToBeDone(Activity $activity): bool
+    {
+        if($activity->getState()->getName()!='ongoing'){
+            return false;
+        }
+
+        $startingDate = clone $activity->getStartingDate();
+        $durationHours = $activity->getDurationHours() ? $activity->getDurationHours():0;
+        $endingDate = $startingDate->modify('+'.$durationHours.'hour');
+
+        if($endingDate < new \DateTime()){
+            return true;
+        }
+        return false;
+    }
 
 }
