@@ -18,11 +18,10 @@
     {{ form_row(registrationForm.last_name) }}
     {{ form_row(registrationForm.phone) }}
     {{ form_row(registrationForm.email) }}
-    {{ form_row(registrationForm.plainPassword, {label: 'Password'}) }}
     {{ form_row(registrationForm.campus) }}
+    {{ form_row(registrationForm.imageFile) }}
     {{ form_row(registrationForm.roles) }}
-
-
+    {{ form_row(registrationForm.plainPassword, {label: 'Password'}) }}
 
         <button type="submit" class="btn">Enregistrer</button>
     {{ form_end(registrationForm) }}

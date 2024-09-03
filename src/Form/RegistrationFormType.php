@@ -7,15 +7,13 @@ use App\Entity\User;
 use App\Repository\CampusRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\IsTrue;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 class RegistrationFormType extends AbstractType
@@ -38,9 +36,31 @@ class RegistrationFormType extends AbstractType
             ->add('phone',null,[
                 'label' => "Téléphone",
             ])
-
             ->add('email',null,[
                 'label' => "Email",
+            ])
+            ->add('campus', EntityType::class, [
+                'label' => 'Site',
+                'class' => Campus::class,
+                'choice_label' => 'name',
+                'query_builder' => function(CampusRepository $campusRepository) {
+                    return $campusRepository->createQueryBuilder('s')->orderBy('s.name', 'ASC');
+                }
+            ])
+            ->add('roles', ChoiceType::class, [
+                'choices'  => [
+                    'Admin' => 'ROLE_ADMIN',
+                    //'User' => 'ROLE_USER',
+                ],
+                'multiple' => true,
+                'expanded' => true,
+            ])
+            ->add('imageFile', FileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new Image()
+                ]
             ])
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
@@ -65,22 +85,6 @@ class RegistrationFormType extends AbstractType
                     'label' => 'Confirmez votre mot de passe',
                 ]
             ])
-            ->add('campus', EntityType::class, [
-                'label' => 'Site',
-                'class' => Campus::class,
-                'choice_label' => 'name',
-                'query_builder' => function(CampusRepository $campusRepository) {
-                    return $campusRepository->createQueryBuilder('s')->orderBy('s.name', 'ASC');
-                }
-            ])
-            ->add('roles', ChoiceType::class, [
-                'choices'  => [
-                    'Admin' => 'ROLE_ADMIN',
-                    //'User' => 'ROLE_USER',
-                ],
-                'multiple' => true,
-                'expanded' => true,
-            ]);
         ;
     }
 
