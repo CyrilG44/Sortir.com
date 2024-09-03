@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sites{% endblock %}
+
+{% block body %}
+    <h1>Sites</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nom</th>
+                <th>Gérer</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for campus in campuses %}
+            <tr>
+                <td><a href="{{ path('app_campus_show', {'id': campus.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a></td>
+                <td>{{ campus.name }}</td>
+                <td>
+                    <a href="{{ path('app_campus_edit', {'id': campus.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier"></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_campus_new') }}">Créer</a>
+{% endblock %}

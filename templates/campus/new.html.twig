@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Site{% endblock %}
+
+{% block body %}
+    <h1>Créer site</h1>
+
+    {{ include('campus/_form.html.twig') }}
+
+    <a href="{{ path('app_campus_list') }}">back to list</a>
+{% endblock %}
