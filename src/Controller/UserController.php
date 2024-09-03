@@ -24,7 +24,7 @@ class UserController extends AbstractController
 {
 
 
-    #[Route('/admin', name: '_index', methods: ['GET'])]
+    #[Route('/', name: '_list', methods: ['GET'])]
     #[IsGranted("ROLE_ADMIN")]
     public function index(UserRepository $userRepository): Response
     {
@@ -111,7 +111,7 @@ class UserController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('app_user_index');
+        return $this->redirectToRoute('app_user_list');
     }
 
     #[Route('/disable/{id}', name: '_disable', requirements: ['id' => '\d+'], methods: ['GET'])]
@@ -123,13 +123,13 @@ class UserController extends AbstractController
             if($user->isActive()){
                 $user->setActive(false);
                 $entityManager->flush();
-                return $this->redirectToRoute('app_user_index');
+                return $this->redirectToRoute('app_user_list');
             } else {
                 $user->setActive(true);
                 $entityManager->flush();
-                return $this->redirectToRoute('app_user_index');
+                return $this->redirectToRoute('app_user_list');
             }
         }
-        return $this->redirectToRoute('app_user_index');
+        return $this->redirectToRoute('app_user_list');
     }
 }
