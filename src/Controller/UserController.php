@@ -23,15 +23,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserController extends AbstractController
 {
 
-/* ====== LISTER LES USERS ========
-    #[Route('/', name: '_index', methods: ['GET'])]
+
+    #[Route('/admin', name: '_index', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function index(UserRepository $userRepository): Response
     {
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAll(),
         ]);
     }
-*/
 
     #[Route('/myAccount', name: '_show', methods: ['GET'])]
     public function show(): Response
@@ -104,16 +104,35 @@ class UserController extends AbstractController
 
 //    ==================== DELETE USER ===============
 
-//    #[Route('/delete', name: '_delete', methods: ['POST'])]
-//    public function delete(Request $request, EntityManagerInterface $entityManager): Response
-//    {
-//        $user = $this->getUser();
-//
-//        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
-//            $entityManager->remove($user);
-//            $entityManager->flush();
-//        }
-//
-//        return $this->redirectToRoute('_index', [], Response::HTTP_SEE_OTHER);
-//    }
+    #[Route('/delete/{id}', name: '_delete', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
+    public function delete(Request $request, EntityManagerInterface $entityManager,int $id, UserRepository $userRepository): Response
+    {
+        $user = $userRepository->find($id);
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->get('token'))) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_user_index');
+    }
+
+    #[Route('/disable/{id}', name: '_disable', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
+    public function disable(Request $request, EntityManagerInterface $entityManager,int $id, UserRepository $userRepository): Response
+    {
+        $user = $userRepository->find($id);
+        if ($this->isCsrfTokenValid('disable'.$user->getId(), $request->get('token'))) {
+            if($user->isActive()){
+                $user->setActive(false);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_user_index');
+            } else {
+                $user->setActive(true);
+                $entityManager->flush();
+                return $this->redirectToRoute('app_user_index');
+            }
+        }
+        return $this->redirectToRoute('app_user_index');
+    }
 }
