@@ -113,7 +113,7 @@
                         </a>
                     {%  endif %}
                 </td>
-                <td><a href="">{{ activity.organizer.pseudo }}</a></td>
+                <td><a href="{{ path('app_user_profile', {'id':activity.organizer.id}) }}">{{ activity.organizer.pseudo }}</a></td>
                 <td>
                     {%  if activity.organizer.id == app.user.id and activity.state.name != "done" and activity.state.name != "cancelled" %}
                         <a href="{{ path('app_activity_update', {'id': activity.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier"></a>

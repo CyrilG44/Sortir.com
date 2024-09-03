@@ -56,31 +56,28 @@ class UserController extends AbstractController
 
             /** @var UploadedFile $file */
             $file = $form->get('imageFile')->getData();
-            if($user->getProfileImage()) {
-                /** @var UploadedFile $file */
-                $filename = $user->getProfileImage();
-                $filePath = $this->getParameter('kernel.project_dir') . '/public/profile/images/' . $filename;
-                unlink($filePath);
+            if($file){
+                if($user->getProfileImage()) {
+                    /** @var UploadedFile $file */
+                    $filename = $user->getProfileImage();
+                    $filePath = $this->getParameter('kernel.project_dir') . '/public/profile/images/' . $filename;
+                    unlink($filePath);
+                }
+                $filename = $file->getClientOriginalName();
+                $file->move($this->getParameter('kernel.project_dir') . '/public/profile/images', $filename);
+                $user->setProfileImage($filename);
             }
-            $filename = $file->getClientOriginalName();
-            $file->move($this->getParameter('kernel.project_dir') . '/public/profile/images', $filename);
-            $user->setProfileImage($filename);
 
             // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('password')->getData()
-                )
-            );
-
+            if($form->get('password')->getData()){
+                $user->setPassword(
+                    $userPasswordHasher->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+            }
             $entityManager->flush();
-
-
-
-
-            // do anything else you need here, like send an email
-
             return $this->redirectToRoute('app_home');
         }
 

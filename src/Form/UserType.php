@@ -36,14 +36,6 @@ class UserType extends AbstractType
                 'label' => "Nom",
             ])
 
-            ->add('imageFile', FileType::class, [
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new Image()
-                ]
-            ])
-
             ->add('first_name',null,[
                 'label' => "Prénom",
             ])
@@ -53,49 +45,46 @@ class UserType extends AbstractType
             ])
 
             ->add('email',null,[
-                'label' => "Mail",
+                'label' => "Email",
             ])
-
-            ->add('password', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'options' => [
-                    'attr' => [
-                        'autocomplete' => 'new-password',
-                    ],
-                ],
-                'first_options' => [
-                    'constraints' => [
-                        new NotBlank([
-                            'message' => 'Please enter a password',
-                        ]),
-                        new Length([
-                            'min' => 8,
-                            'minMessage' => 'Your password should be at least {{ limit }} characters',
-                            // max length allowed by Symfony for security reasons
-                            'max' => 4096,
-                        ]),
-                        new PasswordStrength(),
-
-
-
-                    ],
-                    'label' => 'Mot de passe',
-                ],
-                'second_options' => [
-                    'label' => 'Comfirmation',
-                ],
-                'invalid_message' => 'The password fields must match.',
-                // Instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
-            ])
-
             ->add('campus', EntityType::class, [
                 'class' => Campus::class,
                 'choice_label' => 'name',
                 'query_builder' => function(CampusRepository $campusRepository) {
                     return $campusRepository->createQueryBuilder('s')->orderBy('s.name', 'ASC');
                 }
+            ])
+            ->add('imageFile', FileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new Image()
+                ]
+            ])
+            ->add('password', RepeatedType::class, [
+                'required' => false, //pas obligatoire en édition du profil
+                'type' => PasswordType::class,
+                'options' => [
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                    ],
+                ],
+                'constraints' => [
+                    new PasswordStrength([
+                    'minScore' => 1,
+                    'message' => 'votre mot de passe est trop faible',
+                    ])
+                ],
+                'first_options' => [
+                    'label' => 'Mot de passe',
+                ],
+                'second_options' => [
+                    'label' => 'Confirmation',
+                ],
+                'invalid_message' => 'The password fields must match.',
+                // Instead of being set onto the object directly,
+                // this is read and encoded in the controller
+                'mapped' => false,
             ])
         ;
     }

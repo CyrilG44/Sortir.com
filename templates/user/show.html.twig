@@ -29,18 +29,15 @@
                 <td>{{ user.phone }}</td>
             </tr>
             <tr>
-                <th>Mail</th>
+                <th>Email</th>
                 <td>{{ user.email }}</td>
             </tr>
             <tr>
-                <th>Site de rattachement :</th>
+                <th>Site</th>
                 <td>{{ user.campus.name }}</td>
             </tr>
         </tbody>
     </table>
-
-
-
 
     {% if  user.id == app.user.id%}
     <a href="{{ path('app_user_edit') }}">Modifier</a>

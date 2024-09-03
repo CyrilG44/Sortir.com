@@ -40,7 +40,7 @@ class RegistrationFormType extends AbstractType
             ])
 
             ->add('email',null,[
-                'label' => "Mail",
+                'label' => "Email",
             ])
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
@@ -54,14 +54,11 @@ class RegistrationFormType extends AbstractType
                 'first_options' => [
                     'label' => 'Mot de passe',
                     'constraints' => [
-                        new NotBlank([
-                            'message' => 'Please enter a password',
-                        ]),
                         new PasswordStrength([
                             'minScore' => 1,
                             'message' => 'votre mot de passe est trop faible',
                         ])
-                    ],
+                   ],
 
                 ],
                 'second_options' => [
@@ -69,6 +66,7 @@ class RegistrationFormType extends AbstractType
                 ]
             ])
             ->add('campus', EntityType::class, [
+                'label' => 'Site',
                 'class' => Campus::class,
                 'choice_label' => 'name',
                 'query_builder' => function(CampusRepository $campusRepository) {
@@ -78,7 +76,7 @@ class RegistrationFormType extends AbstractType
             ->add('roles', ChoiceType::class, [
                 'choices'  => [
                     'Admin' => 'ROLE_ADMIN',
-                    'User' => 'ROLE_USER',
+                    //'User' => 'ROLE_USER',
                 ],
                 'multiple' => true,
                 'expanded' => true,
