@@ -48,7 +48,7 @@ class ActivityListener
         }
     }
 
-    public function hasToBeArchived(Activity $activity): bool
+    private function hasToBeArchived(Activity $activity): bool
     {
         if($activity->isArchived()){
             return false;
@@ -64,7 +64,7 @@ class ActivityListener
         return false;
     }
 
-    public function hasToBePending(Activity $activity): bool
+    private function hasToBePending(Activity $activity): bool
     {
         if($activity->getState()->getName()!='open' & $activity->getState()->getName()!='full'){
             return false;
@@ -76,7 +76,7 @@ class ActivityListener
         return false;
     }
 
-    public function hasToBeOngoing(Activity $activity): bool
+    private function hasToBeOngoing(Activity $activity): bool
     {
         if($activity->getState()->getName()!='pending' & $activity->getState()->getName()!='open' & $activity->getState()->getName()!='full'){
             return false;
@@ -88,7 +88,7 @@ class ActivityListener
         return false;
     }
 
-    public function hasToBeDone(Activity $activity): bool
+    private function hasToBeDone(Activity $activity): bool
     {
         if($activity->getState()->getName()!='ongoing'){
             return false;
