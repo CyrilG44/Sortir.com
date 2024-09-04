@@ -20,6 +20,7 @@
                     {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="{{ path('app_campus_index') }}">Sites</a></li>
                         <li><a href="{{ path('app_user_list') }}">Utilisateurs</a></li>
+                        <li><a href="{{ path('app_user_import') }}">Importer des utilisateurs</a></li>
                     {% endif %}
                     {%  if is_granted('IS_AUTHENTICATED') %}
                         <li><a href="{{ path('app_activity_list') }}">Sorties</a></li>
@@ -33,8 +34,8 @@
             </nav>
         </header>
 
-{% block body %}{% endblock %}
+        {% block body %}{% endblock %}
 
-<footer>© ENI 2024 - HD2WM_152 [The best team]</footer>
-</body>
+        <footer>© ENI 2024 - HD2WM_152 [The best team]</footer>
+    </body>
 </html>
