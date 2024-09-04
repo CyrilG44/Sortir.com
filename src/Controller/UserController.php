@@ -119,7 +119,8 @@ class UserController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->get('token'))) {
 
             # if user have organized one or more activities
-            $activityRepository->replaceOrganizerByDummy(10, $user->getId());
+            $id = $userRepository->findIdbyPseudo('Mystery')[0]['id'];
+            $activityRepository->replaceOrganizerByDummy($id, $user->getId());
             #
 
             # if user is register to one or more activities

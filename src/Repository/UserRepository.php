@@ -69,4 +69,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function findIdbyPseudo(string $pseudo) :?array {
+        $query = $this->createQueryBuilder('a')
+            ->select('a.id')
+            ->where('a.pseudo = :pseudo')
+            ->setParameter(':pseudo',$pseudo)
+            ->getQuery();
+
+        return $query->getResult();
+    }
 }
