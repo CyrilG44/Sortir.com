@@ -44,7 +44,7 @@ class Activity
 
     #[ORM\Column(nullable: true)]
     #[Assert\Type(type: 'int', message: "Veuillez renseigner un nombre")]
-    #[Assert\Range(max: 24, maxMessage: "L'activité ne peut pas durer plus de 24 heures")]
+    #[Assert\Range(min:0, max: 24, notInRangeMessage: "L'activité ne peut pas durer plus de 24 heures")]
     private ?int $duration_hours = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

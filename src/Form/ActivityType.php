@@ -47,10 +47,10 @@ class ActivityType extends AbstractType
                 'label' => "Description",
                 'required' => false,
             ])
-            ->add('photo_url', null,  [
-                'label' => "URL de la photo",
-                'required' => false,
-            ])
+            //->add('photo_url', null,  [
+                //'label' => "URL de la photo",
+                //'required' => false,
+            //])
             ->add('place', EntityType::class, [
                 'class' => Place::class,
                 'choice_label' => 'name',

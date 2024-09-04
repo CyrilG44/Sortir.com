@@ -13,6 +13,10 @@
                 <td>{{ activity.name }}</td>
             </tr>
             <tr>
+                <th>Statut</th>
+                <td>{{ activity.state.nameFr }}</td>
+            </tr>
+            <tr>
                 <th>Date et l'heure de la sortie : </th>
                 <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
