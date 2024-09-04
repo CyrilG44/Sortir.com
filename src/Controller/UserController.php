@@ -233,6 +233,7 @@ class UserController extends AbstractController
                         $isMailUsed = $userRepository->findOneBy(['email' => $data[7]]);
                         $isCampusValid = $campusRepository->findOneBy(['name' => $data[0]]);
                         $isActiveValid = true;
+                        $isRoleValid = true;
                         $roles[0] = strtoupper($data[2]);
                         if($roles[0] === ""){
                             $roles[0] = 'ROLE_USER';
@@ -249,6 +250,7 @@ class UserController extends AbstractController
                         }
 
                         if($roles[0] !== 'ROLE_USER' && $roles[0] !== 'ROLE_ADMIN'){
+                            $isRoleValid = false;
                             $this->addFlash('error', 'Utilisateur : '. $data[5] .' '. $data[4] .' le rôle : '.$data[7]. ' n\'est pas valide ! L\'utilisateur n\'a pas été ajouté ! (utilisateur : ROLE_USER ; admin : ROLE_ADMIN)');
                         }
 
@@ -257,7 +259,7 @@ class UserController extends AbstractController
                             $this->addFlash('error', 'Utilisateur : '. $data[5] .' '. $data[4] .' est_actif : '.$data[8]. ' n\'est pas valide !  L\'utilisateur n\'a pas été ajouté ! (0 = inactif, 1 = actif)');
                         }
 
-                        if(!$isPseudoUsed && !$isMailUsed && $isCampusValid && $isActiveValid){
+                        if(!$isPseudoUsed && !$isMailUsed && $isCampusValid && $isActiveValid && $isRoleValid){
                             $user->setCampus($isCampusValid);
                             $user->setPseudo($data[1]);
                             $user->setRoles($roles);
@@ -270,11 +272,11 @@ class UserController extends AbstractController
                             $user->setActive($data[8]);
 
                             $entityManager->persist($user);
+                            $entityManager->flush();
                         }
                     }
 
                     fclose($handle);
-                    $entityManager->flush();
 
                     $this->addFlash('success', 'Utilisateurs ajoutés avec succès !');
                     return $this->redirectToRoute('app_user_import');
