@@ -83,7 +83,6 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/create', name: '_create', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $activity = new Activity();
@@ -105,7 +104,6 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/{id}', name: '_detail', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function show(Activity $activity): Response
     {
         return $this->render('activity/detail.html.twig', [
@@ -114,7 +112,6 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/update/{id}', name: '_update', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Activity $activity, EntityManagerInterface $entityManager): Response
     {
         //controle modif faite par organisateur -> in_array('ROLE_ADMIN',$this->getUser()->getRoles())
@@ -140,7 +137,6 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/cancel/{id}', name: '_cancel', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
     public function cancel(Request $request, Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
     {
         //if not organizer or admin
@@ -171,7 +167,6 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/signUp/{id}', name: '_signup', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function signUp(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar, StateRepository $sr): Response
     {
         //controle token
@@ -219,7 +214,6 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/unsubscribe/{id}', name: '_unsubscribe', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function unsubscribe(Request $request, Activity $activity, EntityManagerInterface $entityManager, RegistrationRepository $registrationRepository, ActivityRepository $ar, StateRepository $sr): Response
     {
         if (!$this->isCsrfTokenValid('unsubscribe' . $activity->getId(), $request->query->get('token'))) {
@@ -253,7 +247,6 @@ class ActivityController extends AbstractController
     }
 
     #[Route('/publish/{id}', name: '_publish')]
-    #[IsGranted('ROLE_USER')]
     public function publish(Activity $activity, EntityManagerInterface $em, StateRepository $stateRepository): Response {
         //if not organizer
         if($activity->getOrganizer()->getId()!=$this->getUser()->getId()){

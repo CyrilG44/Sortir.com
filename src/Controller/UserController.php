@@ -34,6 +34,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/myAccount', name: '_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(): Response
     {
         $user = $this->getUser();

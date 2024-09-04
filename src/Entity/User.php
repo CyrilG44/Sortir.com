@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: 'pseudo', message: 'Pseudo déjà utilisé')]
 #[UniqueEntity(fields: 'email', message: 'E-mail déjà utilisé')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, EquatableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -296,6 +297,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->profileImage = $profileImage;
 
         return $this;
+    }
+
+    public function isEqualTo(UserInterface $user): bool
+    {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($this->is_active !== $user->is_active) {
+            // Forces the user to log in again if enabled
+            // changes from true to false or vice-versa.
+            // This could be replaced by a more sophisticated comparison.
+            return false;
+        }
+
+        // do a bunch of other checks, such as comparing the
+        // password hash: this will cause the user to be logged
+        // out when their password is changed.
+
+        return true;
     }
 
 }
