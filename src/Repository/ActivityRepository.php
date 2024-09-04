@@ -59,6 +59,18 @@ class ActivityRepository extends ServiceEntityRepository
         return $query->getQuery()
             ->getResult();
     }
+
+    public function replaceOrganizerByDummy(int $organizer_id,int $dummy_id) :void {
+        $query = $this->createQueryBuilder('a')
+            ->update()
+            ->set('a.organizer', ':organizer')
+            ->where('a.organizer = :id')
+            ->setParameter(':organizer',$organizer_id)
+            ->setParameter(':id',$dummy_id)
+            ->getQuery()
+            ->execute();
+    }
+
     //    /**
     //     * @return Activity[] Returns an array of Activity objects
     //     */

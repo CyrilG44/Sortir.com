@@ -17,6 +17,15 @@ class RegistrationRepository extends ServiceEntityRepository
         parent::__construct($registry, Registration::class);
     }
 
+    public function deleteUserByid(int $user_id) :void {
+        $query = $this->createQueryBuilder('a')
+            ->delete()
+            ->where('a.user = :id')
+            ->setParameter(':id',$user_id)
+            ->getQuery()
+            ->execute();
+    }
+
 
     //    /**
     //     * @return Registration[] Returns an array of Registration objects

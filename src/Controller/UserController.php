@@ -6,6 +6,8 @@ use App\Entity\Activity;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Form\UserType;
+use App\Repository\ActivityRepository;
+use App\Repository\RegistrationRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -104,10 +106,34 @@ class UserController extends AbstractController
 
     #[Route('/delete/{id}', name: '_delete', methods: ['GET'])]
     #[IsGranted("ROLE_ADMIN")]
-    public function delete(Request $request, EntityManagerInterface $entityManager,int $id, UserRepository $userRepository): Response
+    public function delete(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        int $id,
+        UserRepository $userRepository,
+        ActivityRepository $activityRepository,
+        RegistrationRepository $registrationRepository
+    ):  Response
     {
         $user = $userRepository->find($id);
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->get('token'))) {
+
+            # if user have organized one or more activities
+            $activityRepository->replaceOrganizerByDummy(10, $user->getId());
+            #
+
+            # if user is register to one or more activities
+            $registrationRepository->deleteUserByid($user->getId());
+            #
+
+            # Delete user profile image if exist
+            if($user->getProfileImage()) {
+                /** @var UploadedFile $file */
+                $filename = $user->getProfileImage();
+                $filePath = $this->getParameter('kernel.project_dir') . '/public/profile/images/' . $filename;
+                unlink($filePath);
+            }
+
             $entityManager->remove($user);
             $entityManager->flush();
         }
