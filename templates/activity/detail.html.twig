@@ -5,6 +5,12 @@
 {% block body %}
     <h1>Activity</h1>
 
+    {% if activity.getPhotoUrl() %}
+        <p>
+            <img src="{{ activity.photoUrl }}" alt="profile picture" style="max-width: 30vw">
+        </p>
+    {% endif %}
+
     <table class="table">
         <tbody>
 
