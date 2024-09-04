@@ -23,6 +23,7 @@
                     {% endif %}
                     {%  if is_granted('IS_AUTHENTICATED') %}
                         <li><a href="{{ path('app_activity_list') }}">Sorties</a></li>
+                        <li><a href="{{ path('app_place_index') }}">Lieux</a></li>
                         <li><a href="{{ path('app_user_show') }}">{{ app.user.pseudo ?? 'Mon profil' }}</a></li>
                         <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
                     {% else %}
