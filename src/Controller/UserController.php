@@ -31,12 +31,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/user',name: 'app_user')]
 class UserController extends AbstractController
 {
-    private $logger;
-
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
 
     #[Route('/', name: '_list', methods: ['GET'])]
     #[IsGranted("ROLE_ADMIN")]
