@@ -57,6 +57,7 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('app_campus_index') }}"  class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Sites</a>
                 <a href="{{ path('app_user_list') }}"  class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Utilisateurs</a>
+                <a href="{{ path('app_user_import') }}"  class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Import utilisateurs</a>
             {% endif %}
             {% if is_granted('IS_AUTHENTICATED') %}
                 <a href="{{ path('app_activity_list') }}" class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Sorties</a>

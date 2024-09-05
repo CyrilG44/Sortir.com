@@ -221,52 +221,60 @@ class UserController extends AbstractController
                     while (($data = fgetcsv($handle, 1000, $delimiter)) !== false) {
                         // $data est un tableau des valeurs pour une ligne
 
-                        $user = new User();
-                        //dd($data);
-                        $isPseudoUsed = $userRepository->findOneBy(['pseudo' => $data[1]]);
-                        $isMailUsed = $userRepository->findOneBy(['email' => $data[7]]);
-                        $isCampusValid = $campusRepository->findOneBy(['name' => $data[0]]);
-                        $isActiveValid = true;
-                        $isRoleValid = true;
-                        $roles[0] = strtoupper($data[2]);
-                        if($roles[0] === ""){
-                            $roles[0] = 'ROLE_USER';
-                        }
+                        if($data[0]) {
 
-                        if($isPseudoUsed){
-                            $this->addFlash('error', 'Utilisateur : '. $data[5] .' '. $data[4] .' le pseudo : '.$data[1]. ' est déjà utilisé ! L\'utilisateur n\'a pas été ajouté !');
-                        }
-                        if($isMailUsed) {
-                            $this->addFlash('error', 'Utilisateur : '. $data[5] .' '. $data[4] .' l\'e-mail : '.$data[7]. ' n\'est pas valide ! L\'utilisateur n\'a pas été ajouté !');
-                        }
-                        if(!$isCampusValid){
-                            $this->addFlash('error', 'Utilisateur : '. $data[5] .' '. $data[4] .' le campus : '.$data[7]. ' n\'est pas valide ! L\'utilisateur n\'a pas été ajouté !');
-                        }
+                            $forbiddenChar = "'(){}[],.;:=~";
+                            $isPseudoIncorrect = strpbrk($data[1], $forbiddenChar);
+                            if (!$isPseudoIncorrect) {
+                                $isPseudoUsed = $userRepository->findOneBy(['pseudo' => $data[1]]);
+                            }
+                            $isMailUsed = $userRepository->findOneBy(['email' => $data[7]]);
+                            $isCampusValid = $campusRepository->findOneBy(['name' => $data[0]]);
+                            $isActiveValid = true;
+                            $isRoleValid = true;
+                            $roles[0] = strtoupper($data[2]);
+                            if ($roles[0] === "") {
+                                $roles[0] = 'ROLE_USER';
+                            }
 
-                        if($roles[0] !== 'ROLE_USER' && $roles[0] !== 'ROLE_ADMIN'){
-                            $isRoleValid = false;
-                            $this->addFlash('error', 'Utilisateur : '. $data[5] .' '. $data[4] .' le rôle : '.$data[7]. ' n\'est pas valide ! L\'utilisateur n\'a pas été ajouté ! (utilisateur : ROLE_USER ; admin : ROLE_ADMIN)');
-                        }
+                            if ($isPseudoIncorrect) {
+                                $this->addFlash('error', 'Utilisateur : ' . $data[5] . ' ' . $data[4] . ' le pseudo : ' . $data[1] . ' n\'est pas autorisé ! L\'utilisateur n\'a pas été ajouté !');
+                            }
+                            if ($isPseudoUsed) {
+                                $this->addFlash('error', 'Utilisateur : ' . $data[5] . ' ' . $data[4] . ' le pseudo : ' . $data[1] . ' est déjà utilisé ! L\'utilisateur n\'a pas été ajouté !');
+                            }
+                            if ($isMailUsed) {
+                                $this->addFlash('error', 'Utilisateur : ' . $data[5] . ' ' . $data[4] . ' l\'e-mail : ' . $data[7] . ' est déjà utilisé ! L\'utilisateur n\'a pas été ajouté !');
+                            }
+                            if (!$isCampusValid) {
+                                $this->addFlash('error', 'Utilisateur : ' . $data[5] . ' ' . $data[4] . ' le campus : ' . $data[7] . ' n\'est pas valide ! L\'utilisateur n\'a pas été ajouté !');
+                            }
+                            if ($roles[0] !== 'ROLE_USER' && $roles[0] !== 'ROLE_ADMIN') {
+                                $isRoleValid = false;
+                                $this->addFlash('error', 'Utilisateur : ' . $data[5] . ' ' . $data[4] . ' le rôle : ' . $data[7] . ' n\'est pas valide ! L\'utilisateur n\'a pas été ajouté ! (utilisateur : ROLE_USER ; admin : ROLE_ADMIN)');
+                            }
+                            if ($data[8] !== '0' && $data[8] !== '1') {
+                                $isActiveValid = false;
+                                $this->addFlash('error', 'Utilisateur : ' . $data[5] . ' ' . $data[4] . ' est_actif : ' . $data[8] . ' n\'est pas valide !  L\'utilisateur n\'a pas été ajouté ! (0 = inactif, 1 = actif)');
+                            }
 
-                        if($data[8] !== '0' && $data[8] !== '1'){
-                            $isActiveValid = false;
-                            $this->addFlash('error', 'Utilisateur : '. $data[5] .' '. $data[4] .' est_actif : '.$data[8]. ' n\'est pas valide !  L\'utilisateur n\'a pas été ajouté ! (0 = inactif, 1 = actif)');
-                        }
+                            $user = new User();
 
-                        if(!$isPseudoUsed && !$isMailUsed && $isCampusValid && $isActiveValid && $isRoleValid){
-                            $user->setCampus($isCampusValid);
-                            $user->setPseudo($data[1]);
-                            $user->setRoles($roles);
-                            $passwordHash = $passwordHasher->hashPassword($user, $data[3]);
-                            $user->setPassword($passwordHash);
-                            $user->setLastName($data[4]);
-                            $user->setFirstName($data[5]);
-                            $user->setPhone($data[6]);
-                            $user->setEmail($data[7]);
-                            $user->setActive($data[8]);
+                            if (!$isPseudoUsed && !$isMailUsed && $isCampusValid && $isActiveValid && $isRoleValid) {
+                                $user->setCampus($isCampusValid);
+                                $user->setPseudo($data[1]);
+                                $user->setRoles($roles);
+                                $passwordHash = $passwordHasher->hashPassword($user, $data[3]);
+                                $user->setPassword($passwordHash);
+                                $user->setLastName($data[4]);
+                                $user->setFirstName($data[5]);
+                                $user->setPhone($data[6]);
+                                $user->setEmail($data[7]);
+                                $user->setActive($data[8]);
 
-                            $entityManager->persist($user);
-                            $entityManager->flush();
+                                $entityManager->persist($user);
+                                $entityManager->flush();
+                            }
                         }
                     }
 
