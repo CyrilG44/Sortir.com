@@ -19,7 +19,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 #[IsGranted('ROLE_USER')]
 class PlaceController extends AbstractController
 {
-    private string $URL = 'https://api-adresse.data.gouv.fr/search';
+    private string $URL = 'https://api-adresse.data.gouv.fr/search/?q=';
 
     #[Route('/', name: 'app_place_index', methods: ['GET','POST'])]
     public function index(Request $request,PlaceRepository $placeRepository): Response
@@ -48,12 +48,28 @@ class PlaceController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try{
-                $response = $httpClient->request('GET', 'https://api-adresse.data.gouv.fr/search/?q=2+Rue+L%C3%A9on+Ma%C3%AEtre+44000');
+                $targetURL = $this->URL;
+                foreach (explode(' ',$place->getStreet()) as $word){
+                    $targetURL .= $word.'+';
+                }
+                $targetURL .= $place->getCity()->getPostcode().'+'.$place->getCity()->getName();
+                $targetURL .= '&limit=5';
+                $response = $httpClient->request('GET', $targetURL);
                 $json = json_decode($response->getContent(),true);
                 $foundPlaces = $json['features'];
+                if(count($foundPlaces)==0){
+                    $form->addError(new FormError('La rue renseignée est introuvable !'));
+                    return $this->render('place/new.html.twig', [
+                        'place' => $place,
+                        'form' => $form,
+                    ]);
+                }
                 if(count($foundPlaces)>1){
                     $form->addError(new FormError('Le lieu renseigné n\'est pas assez précis !'));
-                    return $this->redirectToRoute('app_place_index', [], );
+                    return $this->render('place/new.html.twig', [
+                        'place' => $place,
+                        'form' => $form,
+                    ]);
                 }
 
                 $foundCoordinates = $foundPlaces[0]['geometry']['coordinates'];
@@ -61,7 +77,7 @@ class PlaceController extends AbstractController
                 $place->setLatitude($foundCoordinates[1]);
 
             } catch (Exception $e) {
-
+                $this->addFlash('warning', 'Un problème technique est survenu pour récupérer les coordonnées du lieu !');
             }
             $entityManager->persist($place);
             $entityManager->flush();
@@ -100,6 +116,7 @@ class PlaceController extends AbstractController
         ]);
     }
 
+    /*
     #[Route('/{id}', name: 'app_place_delete', methods: ['POST'])]
     public function delete(Request $request, Place $place, EntityManagerInterface $entityManager): Response
     {
@@ -110,4 +127,5 @@ class PlaceController extends AbstractController
 
         return $this->redirectToRoute('app_place_index', [], Response::HTTP_SEE_OTHER);
     }
+    */
 }

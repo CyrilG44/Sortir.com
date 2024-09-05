@@ -27,7 +27,9 @@
         <tbody>
         {% for campus in campuses %}
             <tr>
-                <td><a href="{{ path('app_campus_show', {'id': campus.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a></td>
+                <td>
+                    <a href="{{ path('app_campus_show', {'id': campus.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a>
+                </td>
                 <td>{{ campus.name }}</td>
                 <td>
                     <a href="{{ path('app_campus_edit', {'id': campus.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier"></a>

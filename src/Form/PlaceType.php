@@ -6,6 +6,7 @@ use App\Entity\City;
 use App\Entity\Place;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,12 +25,6 @@ class PlaceType extends AbstractType
                 'class' => City::class,
                 'label' => 'Ville',
                 'choice_label' => 'name',
-            ])
-            ->add('latitude',null, [
-                'attr' => ['readonly' => true],
-            ])
-            ->add('longitude',null, [
-                'attr' => ['readonly' => true],
             ])
         ;
     }
