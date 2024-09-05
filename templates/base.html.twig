@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sortir.com{% endblock %}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link rel="icon" href="{{asset('/images/favicon.png')}}">
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
@@ -32,13 +32,11 @@
                 </svg>
             </button>
 
-
             <div class="hidden lg:flex space-x-4">
                 <a href="{{ path('app_home') }}" class="text-gray-300 hover:text-white">Accueil</a>
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_campus_index') }}" class="text-gray-300 hover:text-white">Sites</a>
                     <a href="{{ path('app_user_list') }}" class="text-gray-300 hover:text-white">Utilisateurs</a>
-                    <a href="{{ path('app_user_import') }}" class="text-gray-300 hover:text-white">Importer utilisateurs</a>
                 {% endif %}
                 {% if is_granted('IS_AUTHENTICATED') %}
                     <a href="{{ path('app_activity_list') }}" class="text-gray-300 hover:text-white">Sorties</a>
@@ -47,10 +45,8 @@
                 {% else %}
                     <a href="{{ path('app_login') }}" class="text-gray-300 hover:text-white">Se connecter</a>
                 {% endif %}
-                <a href="{{ path('app_register') }}" class="text-gray-300 hover:text-white">Créer utilisateur</a>
             </div>
         </div>
-
 
         <div id="nav-content-mobile" class="hidden lg:hidden max-h-0">
             <a href="{{ path('app_home') }}" class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Accueil</a>
