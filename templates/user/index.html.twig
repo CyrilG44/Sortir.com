@@ -36,7 +36,7 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.isActive ? 'Oui' : 'Non' }}</td>
                     <td>
-                        <button><a href="{{ path('app_user_show', {'id': user.id}) }}">détails</a></button>
+                        <button><a href="{{ path('app_user_profile', {'id': user.id}) }}">détails</a></button>
                         <button><a href="{{ path('app_user_edit', {'id': user.id}) }}">modifier</a></button>
                         <button><a href="{{ path('app_user_disable', {'id': user.id, 'token': csrf_token('disable'~user.id)}) }}" onclick="return confirm('Voulez-vous vraiment le désactiver/activer ?')">Activer/Désactiver</a></button>
                         <button><a href="{{ path('app_user_delete', {'id': user.id, 'token': csrf_token('delete'~user.id)}) }}" onclick="return confirm('Voulez-vous vraiment le supprimer ?')">Supprimer</a></button>
