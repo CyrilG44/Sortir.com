@@ -64,14 +64,14 @@
                 <td>{{ activity.place.city.postcode}}</td>
             </tr>
 
-            <tr>
+            <tr hidden>
                 <th>Latitude :</th>
-                <td>{{ activity.place.latitude }}</td>
+                <td id="latitude">{{ activity.place.latitude }}</td>
             </tr>
 
-            <tr>
+            <tr hidden>
                 <th>Longitude :</th>
-                <td>{{ activity.place.longitude }}</td>
+                <td id="longitude">{{ activity.place.longitude }}</td>
             </tr>
 
         </tbody>
@@ -110,5 +110,7 @@
     {%  if activity.organizer.id == app.user.id %}
     <a href="{{ path('app_activity_update', {'id': activity.id}) }}">Modifier</a>
     {% endif %}
+
+    {{ include('/place/_map.html.twig') }}
 
 {% endblock %}

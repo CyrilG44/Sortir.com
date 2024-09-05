@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Place{% endblock %}
+{% block title %}Lieux{% endblock %}
 
 {% block body %}
     <h1>Place</h1>
@@ -33,5 +33,7 @@
     <a href="{{ path('app_place_index') }}">Retour à la liste</a>
 
     <a href="{{ path('app_place_edit', {'id': place.id}) }}">Modifier</a>
+
+    {{ include('/place/_map.html.twig') }}
 
 {% endblock %}
