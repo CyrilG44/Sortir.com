@@ -142,8 +142,10 @@ class ActivityController extends AbstractController
     #[Route('/cancel/{id}', name: '_cancel', requirements: ['id' => '\d+'], methods: ['GET', 'POST'])]
     public function cancel(Request $request, Activity $activity, EntityManagerInterface $entityManager,StateRepository $stateRepository): Response
     {
+
         //if not organizer or admin
-        if($activity->getState()->getName() != 'draft' & $activity->getState()->getName() != 'open' & $activity->getState()->getName() == 'full'){
+        $user = $this->getUser();
+        if($user->getId() != $activity->getOrganizer()->getId() | in_array('ROLE_ADMIN', $user->getRoles()) == true ){
             throw $this->createAccessDeniedException('Seul l\'organisateur ou un admin peuvent annuler une sortie !');
         }
 
