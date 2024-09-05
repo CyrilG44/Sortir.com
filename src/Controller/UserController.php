@@ -228,7 +228,7 @@ class UserController extends AbstractController
                         // $data est un tableau des valeurs pour une ligne
 
                         $user = new User();
-
+                        //dd($data);
                         $isPseudoUsed = $userRepository->findOneBy(['pseudo' => $data[1]]);
                         $isMailUsed = $userRepository->findOneBy(['email' => $data[7]]);
                         $isCampusValid = $campusRepository->findOneBy(['name' => $data[0]]);
