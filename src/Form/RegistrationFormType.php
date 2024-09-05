@@ -82,7 +82,7 @@ class RegistrationFormType extends AbstractType
 
                 ],
                 'second_options' => [
-                    'label' => 'Confirmez votre mot de passe',
+                    'label' => 'Confirmation',
                 ]
             ])
         ;

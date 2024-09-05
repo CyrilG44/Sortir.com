@@ -1,10 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Activity{% endblock %}
+{% block title %}{{ parent() }} - Activité{% endblock %}
 
 {% block body %}
-    <h1>Activity</h1>
+    <div class="activity-container">
+        <h1>Activité</h1>
 
+        <table class="table">
+            <tbody>
     {% if activity.getPhotoUrl() %}
         <p>
             <img src="{{ activity.photoUrl }}" alt="profile picture" style="max-width: 30vw">
@@ -15,7 +18,7 @@
         <tbody>
 
             <tr>
-                <th>Nom de la sortie : </th>
+                <th>Nom de la sortie :</th>
                 <td>{{ activity.name }}</td>
             </tr>
             <tr>
@@ -23,7 +26,7 @@
                 <td>{{ activity.state.nameFr }}</td>
             </tr>
             <tr>
-                <th>Date et l'heure de la sortie : </th>
+                <th>Date et l'heure de la sortie :</th>
                 <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
@@ -31,12 +34,12 @@
                 <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
-                <th>Nombre de places : </th>
+                <th>Nombre de places :</th>
                 <td>{{ activity.registrationMaxNb }}</td>
             </tr>
             <tr>
-                <th>Durée [heures] : </th>
-                <td>{%  if activity.durationHours %}
+                <th>Durée [heures] :</th>
+                <td>{% if activity.durationHours %}
                         {{ activity.durationHours }}
                     {% else %}
                         <i>Non renseignée</i>
@@ -46,28 +49,28 @@
 
 
             <tr>
-                <th>Description et infos : </th>
+                <th>Description et infos :</th>
                 <td>{{ activity.description }}</td>
             </tr>
 
             <tr>
-                <th>Lieu: </th>
+                <th>Lieu :</th>
                 <td>{{ activity.place.name }}</td>
             </tr>
 
             <tr>
-                <th>Rue : </th>
+                <th>Rue :</th>
                 <td>{{ activity.place.street }}</td>
             </tr>
 
             <tr>
-                <th>Ville : </th>
+                <th>Ville :</th>
                 <td>{{ activity.place.city.name }}</td>
             </tr>
 
             <tr>
                 <th>Code postal :</th>
-                <td>{{ activity.place.city.postcode}}</td>
+                <td>{{ activity.place.city.postcode }}</td>
             </tr>
 
             <tr hidden>
@@ -79,44 +82,40 @@
                 <th>Longitude :</th>
                 <td id="longitude">{{ activity.place.longitude }}</td>
             </tr>
+            </tbody>
+        </table>
 
-        </tbody>
-    </table>
+        <h2>Liste des participants inscrits</h2>
 
-    <h2>Liste des participants inscrits</h2>
-
-    <table>
-        <thead>
-        <tr>
-            <th></th>
-            <th>Pseudo</th>
-            <th>Nom</th>
-        </tr>
-        </thead>
-        <tbody>
-
+        <table class="table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Pseudo</th>
+                <th>Nom</th>
+            </tr>
+            </thead>
+            <tbody>
             {% for registration in activity.registrations %}
                 <tr>
                     <td><a href="{{ path('app_user_profile', {'id': registration.user.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a></td>
-                    <td>{{ registration.user.pseudo }} </td>
+                    <td>{{ registration.user.pseudo }}</td>
                     <td>{{ registration.user.firstName }}</td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="10">Aucune participant pour le moment !</td>
+                    <td colspan="10">Aucun participant pour le moment !</td>
                 </tr>
             {% endfor %}
+            </tbody>
+        </table>
 
-        </tbody>
+        <a class="btn" href="{{ path('app_activity_list') }}">Retour à la liste</a>
 
-    </table>
-
-    <a href="{{ path('app_activity_list') }}">Retour à la liste</a>
-
-    {%  if activity.organizer.id == app.user.id %}
-    <a href="{{ path('app_activity_update', {'id': activity.id}) }}">Modifier</a>
-    {% endif %}
-
+        {% if activity.organizer.id == app.user.id %}
+            <a class="btn" href="{{ path('app_activity_update', {'id': activity.id}) }}">Modifier</a>
+        {% endif %}
+    </div>
     {{ include('/place/_map.html.twig') }}
 
 {% endblock %}

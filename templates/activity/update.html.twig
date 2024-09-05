@@ -3,11 +3,21 @@
 {% block title %}{{ parent() }} - Modifier sortie{% endblock %}
 
 {% block body %}
-    <h1>Modifier l'activité</h1>
+    <div class="container">
+        <h1 class="page-title">Modifier l'activité</h1>
 
-    {{ include('activity/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+        <div class="form-wrapper">
+            {{ include('activity/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+        </div>
 
-    <a href="{{ path('app_activity_list') }}">Retour à la liste</a>
-    {% if activity.state.name=='draft' %}<a href="{{ path('app_activity_publish',{'id':activity.id}) }}">Publier</a>{% endif %}
-    {% if activity.state.name !='done' %}<a href="{{ path('app_activity_cancel',{'id':activity.id}) }}">Supprimer</a>{% endif %}
+        <div class="action-links">
+            <a href="{{ path('app_activity_list') }}" class="btn-link">Retour à la liste</a>
+            {% if activity.state.name=='draft' %}
+                <a href="{{ path('app_activity_publish',{'id':activity.id}) }}" class="btn-action">Publier</a>
+            {% endif %}
+            {% if activity.state.name !='done' %}
+                <a href="{{ path('app_activity_cancel',{'id':activity.id}) }}" class="btn-action btn-danger">Supprimer</a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
