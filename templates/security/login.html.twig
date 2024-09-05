@@ -3,35 +3,44 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-<form method="post">
+    <div class="registration-container max-w-4xl">
+        <form method="post">
+            {% if app.user %}
+                <div class="mb-3">
+                    Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
+                </div>
+            {% endif %}
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-        </div>
-    {% endif %}
+            <h1>Connexion</h1>
 
-    <h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
-    <label for="inputIdentifier">Pseudo ou e-mail</label>
-    <input type="text" value="{{ last_username }}" name="pseudo" id="inputPseudo" class="form-control" autocomplete="username" required autofocus>
-    <label for="inputPassword">Mot de passe</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+            <div class="form-group">
+                <label for="inputPseudo" class="form-label">Pseudo ou e-mail</label>
+                <input type="text" value="{{ last_username }}" name="pseudo" id="inputPseudo" class="form-input" autocomplete="username" required autofocus>
+            </div>
 
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}"
-    >
+            <div class="form-group">
+                <label for="inputPassword" class="form-label">Mot de passe</label>
+                <input type="password" name="password" id="inputPassword" class="form-input" autocomplete="current-password" required>
+            </div>
 
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Se souvenir de moi !
-        </label>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="form-group">
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" name="_remember_me" class="form-checkbox"> Se souvenir de moi !
+                    </label>
+                </div>
+            </div>
+
+            <button class="form-button" type="submit">Connexion</button>
+
+            {% if error %}
+                <p>{{ error.message }}</p>
+
+            {% endif %}
+
+        </form>
+        <a href="{{ path('app_forgot_password_request') }}">Réinitialiser du mot de passe</a>
     </div>
-
-    <button class="btn btn-lg btn-primary" type="submit">Connexion</button>
-
-    {% if error %}
-        <p>{{ error.message }}</p>
-    {% endif %}
-</form>
-    <a href="{{ path('app_forgot_password_request') }}">Réinitialiser du mot de passe</a>
 {% endblock %}

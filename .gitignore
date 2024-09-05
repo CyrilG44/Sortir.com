@@ -30,3 +30,9 @@
 #ignorer le contenu du dossier migrations (pour le moment ?)
 /migrations
 /public/profile
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###

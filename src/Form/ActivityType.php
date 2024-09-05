@@ -9,6 +9,7 @@ use App\Entity\User;
 use phpDocumentor\Reflection\Type;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -51,10 +52,10 @@ class ActivityType extends AbstractType
                 'label' => "URL de la photo",
                 'required' => false,
             ])
-            ->add('place', EntityType::class, [
+            ->add('place', null, [
                 'class' => Place::class,
                 'choice_label' => 'name',
-                'label' => "Lieu",
+                'label' => 'Lieu',
                 'required' => true,
             ])
         ;

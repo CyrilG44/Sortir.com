@@ -67,7 +67,7 @@ class CityController extends AbstractController
             'form' => $form,
         ]);
     }
-
+/*
     #[Route('/{id}', name: 'app_city_delete', methods: ['POST'])]
     public function delete(Request $request, City $city, EntityManagerInterface $entityManager): Response
     {
@@ -78,4 +78,5 @@ class CityController extends AbstractController
 
         return $this->redirectToRoute('app_city_index', [], Response::HTTP_SEE_OTHER);
     }
+*/
 }

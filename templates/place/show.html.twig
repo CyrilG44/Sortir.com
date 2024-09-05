@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lieux{% endblock %}
+
+{% block body %}
+    <h1>Place</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Nom</th>
+                <td>{{ place.name }}</td>
+            </tr>
+            <tr>
+                <th>Rue</th>
+                <td>{{ place.street }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ place.city.postcode ~ ' ' ~ place.city.name }}</td>
+            </tr>
+            <tr hidden>
+                <th>Latitude</th>
+                <td id="latitude">{{ place.latitude }}</td>
+            </tr>
+            <tr hidden>
+                <th>Longitude</th>
+                <td id="longitude">{{ place.longitude }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_place_index') }}">Retour à la liste</a>
+
+    <a href="{{ path('app_place_edit', {'id': place.id}) }}">Modifier</a>
+
+    {{ include('/place/_map.html.twig') }}
+
+{% endblock %}

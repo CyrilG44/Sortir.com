@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lieu{% endblock %}
+
+{% block body %}
+    <h1>Créer un lieu</h1>
+
+    {{ include('place/_form.html.twig') }}
+
+    <a href="{{ path('app_place_index') }}">Retour à la liste</a>
+    <a href="{{ path('app_city_new') }}">Ajouter une ville</a>
+
+{% endblock %}

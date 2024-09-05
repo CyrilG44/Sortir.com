@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Place{% endblock %}
+
+{% block body %}
+    <h1>Edit Place</h1>
+
+    {{ include('place/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <a href="{{ path('app_place_index') }}">Retour à la liste</a>
+
+{% endblock %}

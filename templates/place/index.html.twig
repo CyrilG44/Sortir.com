@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Lieux{% endblock %}
+
+{% block body %}
+    <h1>Lieux</h1>
+
+    <form action="{{ path('app_place_index') }}" method="POST">
+        <div>
+            <label for="word">Le nom contient</label>
+            <input id="word" name="word" type="text">
+        </div>
+        <button type="submit">Rechercher</button>
+    </form>
+    <div>
+        <h2>Résultat(s) de la recherche</h2>
+        {% if word %}<p>Nom contient: {{ word }}</p>{% endif %}
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Nom</th>
+                <th>Rue</th>
+                <th>Ville</th>
+                <th>Gérer</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for place in places %}
+            <tr>
+                <td><a href="{{ path('app_place_show', {'id': place.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher"></a></td>
+                <td>{{ place.name }}</td>
+                <td>{{ place.street }}</td>
+                <td>{{ place.city.postcode ~ ' ' ~ place.city.name }}</td>
+                <td>
+                    <a href="{{ path('app_place_edit', {'id': place.id}) }}"><img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier"></a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Aucun lieu trouvé !</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_place_new') }}"><img style="max-height: 5vh" src="{{ asset('images/icon-ajouter.webp') }}" alt="Ajouter lieu"></a>
+    <a href="{{ path('app_city_index') }}">Voir les villes</a>
+{% endblock %}
