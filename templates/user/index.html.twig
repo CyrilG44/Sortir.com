@@ -4,12 +4,12 @@
 
 {% block body %}
     {%  if is_granted('ROLE_ADMIN') %}
-        <h1>User index</h1>
+        <div class="flex justify-center">
 
         <table class="table">
             <thead>
             <tr>
-                <th>Id</th>
+
                 <th>Pseudo</th>
                 <th>Roles</th>
                 <th>Nom</th>
@@ -23,7 +23,7 @@
             <tbody>
             {% for user in users %}
                 <tr>
-                    <td>{{ user.id }}</td>
+
                     <td>{{ user.pseudo }}</td>
                     <td>
                         {% for role in user.roles %}
@@ -49,6 +49,6 @@
             {% endfor %}
             </tbody>
         </table>
-
+        </div>
     {% endif %}
 {% endblock %}

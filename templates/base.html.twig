@@ -39,6 +39,7 @@
                     <a href="{{ path('app_campus_index') }}" class="text-gray-300 hover:text-white">Sites</a>
                     <a href="{{ path('app_user_list') }}" class="text-gray-300 hover:text-white">Utilisateurs</a>
                     <a href="{{ path('app_user_import') }}" class="text-gray-300 hover:text-white">Importer utilisateurs</a>
+                    <a href="{{ path('app_register') }}" class="text-gray-300 hover:text-white">Créer utilisateur</a>
                 {% endif %}
                 {% if is_granted('IS_AUTHENTICATED') %}
                     <a href="{{ path('app_activity_list') }}" class="text-gray-300 hover:text-white">Sorties</a>
@@ -47,7 +48,6 @@
                 {% else %}
                     <a href="{{ path('app_login') }}" class="text-gray-300 hover:text-white">Se connecter</a>
                 {% endif %}
-                <a href="{{ path('app_register') }}" class="text-gray-300 hover:text-white">Créer utilisateur</a>
             </div>
         </div>
 
@@ -58,6 +58,7 @@
                 <a href="{{ path('app_campus_index') }}"  class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Sites</a>
                 <a href="{{ path('app_user_list') }}"  class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Utilisateurs</a>
                 <a href="{{ path('app_user_import') }}"  class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Import utilisateurs</a>
+                <a href="{{ path('app_register') }}" class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Créer utilisateur</a>
             {% endif %}
             {% if is_granted('IS_AUTHENTICATED') %}
                 <a href="{{ path('app_activity_list') }}" class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Sorties</a>
@@ -66,7 +67,6 @@
             {% else %}
                 <a href="{{ path('app_login') }}" class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Se connecter</a>
             {% endif %}
-            <a href="{{ path('app_register') }}" class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Créer utilisateur</a>
         </div>
     </nav>
 
