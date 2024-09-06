@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sites{% endblock %}
+{% block title %}{{ parent() }} - Campus{% endblock %}
 
 {% block body %}
 <div class="bg-white p-6 rounded-lg shadow-lg mb-8 ">
@@ -8,10 +8,10 @@
 
     <form action="{{ path('app_campus_index') }}" method="POST" class="space-y-4">
         <div>
-            <label for="word">Le nom contient </label>
+            <label for="word">Le nom contient</label>
             <input id="word" name="word" type="text" class="border border-orange-500">
         </div>
-        <button class="bg-amber-500" type="submit" >Rechercher</button>
+        <button class="" type="submit" >Rechercher</button>
     </form>
     <div>
         <h2>Résultat(s) de la recherche</h2>
@@ -24,9 +24,9 @@
     <table class="min-w-full">
         <thead>
             <tr>
-                <th></th>
-                <th>Nom</th>
-                <th>Gérer</th>
+                <th class="text-left">Action</th>
+                <th class="text-left">Nom</th>
+                <th class="text-left">Gérer</th>
             </tr>
         </thead>
         <tbody>
