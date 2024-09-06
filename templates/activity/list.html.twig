@@ -3,7 +3,7 @@
 {% block title %}{{ parent() }} - Liste des sorties{% endblock %}
 
 {% block body %}
-<section class="bg-custom min-h-screen text-white">
+<section class="bg-custom min-h-screen text-black p-8">
     <h1 class="text-3xl lg:text-4xl font-extrabold text-gray-800 mb-8">Sorties</h1>
 
     <div class="mb-8 ">
@@ -90,7 +90,7 @@
             {% if criteria['done'] %}<span class="mr-8">Terminé</span>{% endif %}
         </p>
 
-        <table class="min-w-full bg-white border rounded-lg shadow-lg">
+        <table class="min-w-full bg-white border rounded-lg shadow-lg ">
             <thead class="bg-gray-200 text-gray-700">
             <tr>
                 <th class="py-2 px-4 border-b">Action</th>
@@ -136,11 +136,11 @@
                     </td>
                     <td class="py-2 px-4 border-b">{{ activity.organizer.pseudo }}</td>
                     <td class="py-2 px-4 border-b">
-                        {% if activity.organizer.id == app.user.id and activity.state.name != "done" and activity.state.name != "cancelled" %}
+                        {% if (activity.organizer.id == app.user.id or 'ROLE_ADMIN' in app.user.roles) and activity.state.name != "done" and activity.state.name != "cancelled" %}
                             <a href="{{ path('app_activity_update', {'id': activity.id}) }}">
                                 <img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier" class="mx-auto">
                             </a>
-                            {% if activity.state.name == "draft" %}
+                            {% if activity.state.name == "draft" or 'ROLE_ADMIN' in app.user.roles %}
                                 <a href="{{ path('app_activity_publish', {'id': activity.id}) }}"
                                    onclick="return confirm('Merci de confirmer la publication de la sortie en cliquant sur OK')">
                                     <img style="max-height: 30px" src="{{ asset('images/icone-publier.webp') }}" alt="Publier" class="mx-auto">
@@ -160,8 +160,6 @@
             </tbody>
         </table>
     </div>
-
-
 
     <div class="mt-8">
         {% if not criteria['withArchives'] %}
