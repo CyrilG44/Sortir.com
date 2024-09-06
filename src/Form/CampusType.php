@@ -14,7 +14,10 @@ class CampusType extends AbstractType
     {
         $builder
             ->add('name', null, [
-                'label' => 'Nom',])
+                'label' => 'Nom',
+                'label_attr' => ['class' => 'form-label'],
+                'attr' => ['class' => 'form-input'],
+            ])
         ;
     }
 

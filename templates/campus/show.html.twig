@@ -3,23 +3,25 @@
 {% block title %}{{ parent() }} - Campus{% endblock %}
 
 {% block body %}
-    <h1>Sites</h1>
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-4 text-center">Site</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th></th>
-                <td></td>
-            </tr>
+
+    <div class="flex justify-center">
+        <table class="table">
+            <tbody>
             <tr>
                 <th>Nom</th>
                 <td>{{ campus.name }}</td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('app_campus_index') }}">back to list</a>
+    <div class="flex justify-center">
+        <a class="btn mx-3" href="{{ path('app_campus_index') }}">Retour à la liste</a>
+        <a class="btn mx-3" href="{{ path('app_campus_edit', {'id': campus.id}) }}">Modifier</a>
+    </div>
 
-    <a href="{{ path('app_campus_edit', {'id': campus.id}) }}">edit</a>
-
+</div>
 {% endblock %}

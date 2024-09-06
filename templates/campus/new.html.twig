@@ -3,9 +3,11 @@
 {% block title %}{{ parent() }} - Campus{% endblock %}
 
 {% block body %}
-    <h1>Créer site</h1>
 
-    {{ include('campus/_form.html.twig') }}
+    <div class="max-w-4xl lg:max-w-3xl mx-auto bg-white-transparent p-6 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">Créer un site</h1>
 
-    <a href="{{ path('app_campus_index') }}">Retour</a>
+        {{ include('campus/_form.html.twig') }}
+
+    </div>
 {% endblock %}
