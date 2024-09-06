@@ -3,11 +3,10 @@
 {% block title %}{{ parent() }} - Lieux{% endblock %}
 
 {% block body %}
-    <h1>Créer un lieu</h1>
+<div class="max-w-4xl lg:max-w-3xl mx-auto bg-white-transparent p-6 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">Créer un Lieu</h1>
 
     {{ include('place/_form.html.twig') }}
 
-    <a href="{{ path('app_place_index') }}">Retour à la liste</a>
-    <a href="{{ path('app_city_new') }}">Ajouter une ville</a>
-
+</div>
 {% endblock %}
