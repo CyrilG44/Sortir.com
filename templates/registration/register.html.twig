@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer Utilisateur{% endblock %}
+{% block title %}{{ parent() }} - Utilisateurs{% endblock %}
 
 {% block body %}
  {% for flash_error in app.flashes('verify_email_error') %}

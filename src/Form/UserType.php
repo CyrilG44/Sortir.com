@@ -55,6 +55,7 @@ class UserType extends AbstractType
                 }
             ])
             ->add('imageFile', FileType::class, [
+                'label' => 'Image du profil',
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
@@ -62,6 +63,7 @@ class UserType extends AbstractType
                 ]
             ])
             ->add('password', RepeatedType::class, [
+                'label' => 'Mot de passe',
                 'required' => false, //pas obligatoire en édition du profil
                 'type' => PasswordType::class,
                 'options' => [

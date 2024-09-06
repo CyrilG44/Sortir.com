@@ -60,11 +60,13 @@
     "autoload": {
         "exclude-from-classmap": [
             "vendor/symfony/security-http/EventListener/CheckCredentialsListener.php",
-            "vendor/symfony/security-http/Authentication/AuthenticatorManager.php"
+            "vendor/symfony/security-http/Authentication/AuthenticatorManager.php",
+            "vendor/symfony/validator/Constraints/Image.php"
         ],
         "files": [
             "override/symfony/security-http/EventListener/CheckCredentialsListener.php",
-            "override/symfony/security-http/Authentication/AuthenticatorManager.php"
+            "override/symfony/security-http/Authentication/AuthenticatorManager.php",
+            "override/symfony/validator/Constraints/Image.php"
         ],
         "psr-4": {
             "App\\": "src/"
