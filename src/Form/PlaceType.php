@@ -17,14 +17,20 @@ class PlaceType extends AbstractType
         $builder
             ->add('name', null,[
                 'label' => 'Nom',
+                'label_attr' => ['class' => 'form-label'],
+                'attr' => ['class' => 'form-input']
             ])
             ->add('street', null,[
                 'label' => 'Rue',
+                'label_attr' => ['class' => 'form-label'],
+                'attr' => ['class' => 'form-input']
             ])
             ->add('city', EntityType::class, [
                 'class' => City::class,
                 'label' => 'Ville',
                 'choice_label' => 'name',
+                'label_attr' => ['class' => 'form-label'],
+                'attr' => ['class' => 'form-input']
             ])
         ;
     }
