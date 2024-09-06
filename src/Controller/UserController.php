@@ -274,13 +274,14 @@ class UserController extends AbstractController
 
                                 $entityManager->persist($user);
                                 $entityManager->flush();
+
+                                $this->addFlash('success', 'Utilisateurs '.$data[5].' '. $data[4] .' ajoutés avec succès !');
                             }
                         }
                     }
 
                     fclose($handle);
 
-                    $this->addFlash('success', 'Utilisateurs ajoutés avec succès !');
                     return $this->redirectToRoute('app_user_import');
                 }
             } catch (FileException){
