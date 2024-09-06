@@ -118,8 +118,9 @@ class ActivityController extends AbstractController
     public function edit(Request $request, Activity $activity, EntityManagerInterface $entityManager): Response
     {
         //controle modif faite par organisateur -> in_array('ROLE_ADMIN',$this->getUser()->getRoles())
-        if($activity->getOrganizer()->getId()!=$this->getUser()->getId()){
-            throw $this->createAccessDeniedException('Seul l\'organisateur peut modifier une sortie !');
+        $user = $this->getUser();
+        if(!in_array("ROLE_ADMIN", $user->getRoles()) && $user->getId() != $activity->getOrganizer()->getId()){
+            throw $this->createAccessDeniedException('Seul l\'organisateur ou un admin peuvent annuler une sortie !');
         }
 
         $form = $this->createForm(ActivityType::class, $activity);
@@ -145,7 +146,7 @@ class ActivityController extends AbstractController
 
         //if not organizer or admin
         $user = $this->getUser();
-        if($user->getId() != $activity->getOrganizer()->getId() | in_array('ROLE_ADMIN', $user->getRoles()) == true ){
+        if(!in_array("ROLE_ADMIN", $user->getRoles()) && $user->getId() != $activity->getOrganizer()->getId()){
             throw $this->createAccessDeniedException('Seul l\'organisateur ou un admin peuvent annuler une sortie !');
         }
 
