@@ -3,7 +3,8 @@
 {% block title %}Lieux{% endblock %}
 
 {% block body %}
-    <h1>Place</h1>
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-4 text-center">Lieu</h1>
 
     <table class="table">
         <tbody>
@@ -30,10 +31,11 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_place_index') }}">Retour à la liste</a>
+    <a class="btn" href="{{ path('app_place_index') }}">Retour à la liste</a>
 
-    <a href="{{ path('app_place_edit', {'id': place.id}) }}">Modifier</a>
+    <a class="btn" href="{{ path('app_place_edit', {'id': place.id}) }}">Modifier</a>
 
     {{ include('/place/_map.html.twig') }}
 
+</div>
 {% endblock %}
