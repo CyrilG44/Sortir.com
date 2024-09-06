@@ -32,6 +32,7 @@
                 </svg>
             </button>
 
+
             <div class="hidden lg:flex space-x-4">
                 <a href="{{ path('app_home') }}" class="text-gray-300 hover:text-white">Accueil</a>
                 {% if is_granted('ROLE_ADMIN') %}
@@ -49,6 +50,7 @@
                 {% endif %}
             </div>
         </div>
+
 
         <div id="nav-content-mobile" class="hidden lg:hidden max-h-0">
             <a href="{{ path('app_home') }}" class="block text-gray-300 hover:bg-gray-700 hover:text-white py-2 px-4">Accueil</a>
