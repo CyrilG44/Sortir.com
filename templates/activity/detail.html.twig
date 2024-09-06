@@ -27,11 +27,11 @@
             </tr>
             <tr>
                 <th>Date et l'heure de la sortie :</th>
-                <td>{{ activity.startingDate ? activity.startingDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ activity.startingDate ? activity.startingDate|date('d/m/Y H:i') : '' }}</td>
             </tr>
             <tr>
                 <th>Date limite d'inscription</th>
-                <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ activity.registrationLimitDate ? activity.registrationLimitDate|date('d/m/Y H:i') : '' }}</td>
             </tr>
             <tr>
                 <th>Nombre de places :</th>
@@ -115,7 +115,10 @@
         {% if activity.organizer.id == app.user.id %}
             <a class="btn" href="{{ path('app_activity_update', {'id': activity.id}) }}">Modifier</a>
         {% endif %}
+
+        {{ include('/place/_map.html.twig') }}
+
     </div>
-    {{ include('/place/_map.html.twig') }}
+
 
 {% endblock %}

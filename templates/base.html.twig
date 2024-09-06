@@ -41,6 +41,7 @@
                 {% endif %}
                 {% if is_granted('IS_AUTHENTICATED') %}
                     <a href="{{ path('app_activity_list') }}" class="text-gray-300 hover:text-white">Sorties</a>
+                    <a href="{{ path('app_place_index') }}" class="text-gray-300 hover:text-white">Lieux</a>
                     <a href="{{ path('app_user_show') }}" class="text-gray-300 hover:text-white">{{ app.user.pseudo ?? 'Mon profil' }}</a>
                     <a href="{{ path('app_logout') }}" class="text-gray-300 hover:text-white">Se déconnecter</a>
                 {% else %}

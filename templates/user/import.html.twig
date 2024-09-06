@@ -17,6 +17,10 @@
             href="{{ path('app_user_import', {'token':csrf_token('import')}) }}"
             onclick="return confirm('Merci de confirmer l\'ajout d\'utilisateur(s) en cliquant sur OK')">Importer
         </button>
+
+        <div class="flex justify-center items-center bg-red-100 text-red-700 px-4 py-3 rounded relative mx-auto my-2">
+                <span class="block sm:inline">{{ form_errors(form.csv_file) }}</span>
+        </div>
         {{ form_end(form) }}
     </div>
 
