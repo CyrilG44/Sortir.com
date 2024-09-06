@@ -3,20 +3,25 @@
 {% block title %}Sites{% endblock %}
 
 {% block body %}
-    <h1>Sites</h1>
-    <form action="{{ path('app_campus_index') }}" method="POST">
+<div class="bg-white p-6 rounded-lg shadow-lg mb-8 ">
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+
+    <form action="{{ path('app_campus_index') }}" method="POST" class="space-y-4">
         <div>
             <label for="word">Le nom contient </label>
-            <input id="word" name="word" type="text">
+            <input id="word" name="word" type="text" class="border border-orange-500">
         </div>
-        <button type="submit">Rechercher</button>
+        <button class="bg-amber-500" type="submit" >Rechercher</button>
     </form>
     <div>
         <h2>Résultat(s) de la recherche</h2>
         {% if word %}<p>Nom contient: {{ word }}</p>{% endif %}
 
     </div>
-    <table class="table">
+    </div>
+
+    <div class="bg-white border rounded-lg shadow-lg">
+    <table class="min-w-full">
         <thead>
             <tr>
                 <th></th>
@@ -43,5 +48,8 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_campus_new') }}"><img style="max-height: 5vh" src="{{ asset('images/icon-ajouter.webp') }}" alt="Ajouter campus"></a>
+        <a href="{{ path('app_campus_new') }}"><img style="max-height: 5vh" src="{{ asset('images/icon-ajouter.webp') }}" alt="Ajouter campus"></a>
+
+    </div>
+</div>
 {% endblock %}
