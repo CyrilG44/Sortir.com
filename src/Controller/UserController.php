@@ -185,10 +185,13 @@ class UserController extends AbstractController
             // Vérification de l'extension et du type MIME
             $extension = $csvFile->getClientOriginalExtension();
             $allowedMimeTypes = ['text/csv', 'text/plain'];
-            if ($extension !== 'csv' || !in_array($csvFile->getMimeType(), $allowedMimeTypes)) {
+
+            if ($extension !== 'csv' || (!in_array($csvFile->getMimeType(), $allowedMimeTypes))) {
+                dd($extension, $csvFile->getMimeType());
                 $this->addFlash('error', 'Le type ou extension de votre fichier est invalide. Merci d\'utiliser un fichier .CSV');
                 return $this->redirectToRoute('app_user_import');
             }
+
 
             try{
                 $fileName = uniqid().'.csv';
