@@ -18,7 +18,9 @@ class CancelActivityType extends AbstractType
 
 
         ->add('cancelReason', null,[
-            'required' => true
+            'required' => true,
+            'label_attr' => ['class' => 'form-label'],
+            'attr' => ['class' => 'form-input']
         ])
     ;
 }
