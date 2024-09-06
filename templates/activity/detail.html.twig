@@ -3,16 +3,16 @@
 {% block title %}{{ parent() }} - Sorties{% endblock %}
 
 {% block body %}
-    <div class="activity-container">
-        <h1>Activité</h1>
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-4 text-center">Sortie</h1>
 
-        <table class="table">
-            <tbody>
     {% if activity.getPhotoUrl() %}
-        <p>
-            <img src="{{ activity.photoUrl }}" alt="profile picture" style="max-width: 30vw">
-        </p>
+        <div class="flex justify-center my-5 px-5">
+            <img src="{{ activity.photoUrl }}" alt="profile picture" >
+        </div>
     {% endif %}
+
+    <div class="flex justify-center">
 
     <table class="table">
         <tbody>
@@ -84,9 +84,12 @@
             </tr>
             </tbody>
         </table>
+    </div>
 
-        <h2>Liste des participants inscrits</h2>
 
+        <h2 style="text-align: center">Liste des participants inscrits</h2>
+
+        <div class="flex justify-center">
         <table class="table">
             <thead>
             <tr>
@@ -109,8 +112,11 @@
             {% endfor %}
             </tbody>
         </table>
+        </div>
 
+        <div class="flex justify-center">
         <a class="btn" href="{{ path('app_activity_list') }}">Retour à la liste</a>
+        </div>
 
         {% if activity.organizer.id == app.user.id %}
             <a class="btn" href="{{ path('app_activity_update', {'id': activity.id}) }}">Modifier</a>

@@ -110,7 +110,7 @@
                 {% set isRegistered = activity.registrations|filter(r => r.user.id == app.user.id)|length == 1 %}
                 <tr class="hover:bg-gray-100">
                     <td class="py-2 px-4 border-b">
-                        <a href="{{ path('app_activity_detail', {'id': activity.id}) }}">
+                        <a href="{{ path('app_activity_detail', {'id': activity.id}) }}" title="Afficher">
                             <img style="max-height: 30px" src="{{ asset('images/icone-afficher.webp') }}" alt="Afficher" class="mx-auto">
                         </a>
                     </td>
@@ -123,30 +123,38 @@
                     <td class="py-2 px-4 border-b">
                         {% if not isRegistered and activity.state.name == "open" %}
                             <a href="{{ path('app_activity_signup', {'id': activity.id, 'token': csrf_token('signup' ~ activity.id)}) }}"
-                               onclick="return confirm('Merci de confirmer votre inscription en cliquant sur OK')">
+                               title="S'inscrire" onclick="return confirm('Merci de confirmer votre inscription en cliquant sur OK')">
                                 <img style="max-height: 30px" src="{{ asset('images/icone-s\'inscrire.png') }}" alt="S'inscrire" class="mx-auto">
                             </a>
                         {% endif %}
                         {% if isRegistered and (activity.state.name == "open" or activity.state.name == "full") %}
                             <a href="{{ path('app_activity_unsubscribe', {'id': activity.id, 'token': csrf_token('unsubscribe' ~ activity.id) }) }}"
-                               onclick="return confirm('Merci de confirmer votre désinscription en cliquant sur OK')">
+                               title="Se désister" onclick="return confirm('Merci de confirmer votre désinscription en cliquant sur OK')">
                                 <img style="max-height: 30px" src="{{ asset('images/icone-se-desister.jpg') }}" alt="Se désister" class="mx-auto">
                             </a>
                         {% endif %}
                     </td>
-                    <td class="py-2 px-4 border-b">{{ activity.organizer.pseudo }}</td>
+                    <td class="py-2 px-4 border-b">
+                        {% if activity.organizer.profileImage %}
+                            <a title="{{ activity.organizer.pseudo }}" href="{{ path('app_user_profile',{'id':activity.organizer.id}) }}">
+                                <img src="/profile/images/{{ activity.organizer.profileImage }}" class="w-10 h-10 rounded" alt="Profil">
+                            </a>
+                        {% else %}
+                            <a class="font-medium text-gray-600 dark:text-gray-300" title="{{ activity.organizer.pseudo }}" href="{{ path('app_user_profile',{'id':activity.organizer.id}) }}">{{ activity.organizer.pseudo }}</a>
+                        {% endif %}
+                    </td>
                     <td class="py-2 px-4 border-b">
                         {% if (activity.organizer.id == app.user.id or 'ROLE_ADMIN' in app.user.roles) and activity.state.name != "done" and activity.state.name != "cancelled" %}
-                            <a href="{{ path('app_activity_update', {'id': activity.id}) }}">
+                            <a href="{{ path('app_activity_update', {'id': activity.id}) }}" title="Modifier">
                                 <img style="max-height: 30px" src="{{ asset('images/icone-modifier.png') }}" alt="Modifier" class="mx-auto">
                             </a>
                             {% if activity.state.name == "draft" or 'ROLE_ADMIN' in app.user.roles %}
-                                <a href="{{ path('app_activity_publish', {'id': activity.id}) }}"
+                                <a href="{{ path('app_activity_publish', {'id': activity.id}) }}" title="Publier"
                                    onclick="return confirm('Merci de confirmer la publication de la sortie en cliquant sur OK')">
                                     <img style="max-height: 30px" src="{{ asset('images/icone-publier.webp') }}" alt="Publier" class="mx-auto">
                                 </a>
                             {% endif %}
-                            <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}">
+                            <a href="{{ path('app_activity_cancel', {'id': activity.id}) }}" title="Annuler">
                                 <img style="max-height: 30px" src="{{ asset('images/icone-annuler.jpg') }}" alt="Annuler" class="mx-auto">
                             </a>
                         {% endif %}
